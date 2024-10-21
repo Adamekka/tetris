@@ -1,0 +1,16 @@
+BasedOnStyle: LLVM
+IndentWidth: 4
+InsertNewlineAtEOF: true
+
+AlignAfterOpenBracket: BlockIndent
+AlignOperands: AlignAfterOperator
+AllowShortCaseLabelsOnASingleLine: true
+BinPackArguments: false
+BinPackParameters: false
+BreakBeforeBinaryOperators: All
+IndentCaseLabels: true
+IndentPPDirectives: BeforeHash
+InsertTrailingCommas: Wrapped
+PointerAlignment: Left
+RemoveBracesLLVM: true
+RemoveParentheses: ReturnStatement
