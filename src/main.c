@@ -22,15 +22,11 @@ int main() {
 
     SDL_Event event;
     bool running = true;
-    float last_time = SDL_GetTicks();
 
     while (running) {
         while (SDL_PollEvent(&event))
             if (event.type == SDL_QUIT)
                 running = false;
-
-        const float delta_time = SDL_GetTicks() - last_time;
-        last_time = SDL_GetTicks();
 
         switch (state) {
             case NEW: {
@@ -61,13 +57,12 @@ int main() {
             }
         }
 
-        SDL_RenderClear(renderer);
-
         UI_draw_bg(renderer);
 
         Tetrominoes_draw(renderer, &tetromino, game.tetrominoes);
 
         SDL_RenderPresent(renderer);
+
         SDL_Delay(1000 / 10);
     }
 
