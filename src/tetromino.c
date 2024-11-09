@@ -4,9 +4,11 @@
 
 uint16_t tetromino_ID_count = 0;
 
+extern uint16_t highest_tetrominoes[TILES_X];
+
 void Tetromino_rotate(Tetromino* const t, const Rotation rotation);
 
-void Tetromino_init(Tetromino* const t) {
+bool Tetromino_init(Tetromino* const t) {
     t->id = tetromino_ID_count++;
     t->rotation = UP;
 
@@ -100,7 +102,7 @@ void Tetromino_init(Tetromino* const t) {
         default: assert(false);
     }
 
-    for (uint16_t i = 0; i < TILES_IN_TETROMINO; i++) {
+    for (uint8_t i = 0; i < TILES_IN_TETROMINO; i++) {
         t->tiles[i].value = Vec2_add(t->tiles[i].value, offset);
         assert(t->tiles[i].value.x >= 0);
         assert(t->tiles[i].value.x < TILES_X);
@@ -108,6 +110,13 @@ void Tetromino_init(Tetromino* const t) {
 
     const Rotation rotation = (Rotation)rand() % ROTATION_SIZE;
     Tetromino_rotate(t, rotation);
+
+    for (uint8_t i = 0; i < TILES_IN_TETROMINO; i++) {
+        Vec2* tile = &t->tiles[i].value;
+
+        if (tile->y - 1 == highest_tetrominoes[tile->x])
+            return false;
+    }
 
 #ifdef DEBUG
     printf("Tetromino Created\n");
@@ -125,6 +134,8 @@ void Tetromino_init(Tetromino* const t) {
         );
     }
 #endif
+
+    return true;
 }
 
 void Tetromino_rotate_right(Tetromino* const t) {

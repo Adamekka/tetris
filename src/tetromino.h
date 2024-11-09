@@ -37,7 +37,8 @@ typedef struct {
 
 typedef optional(Tetromino) OptionalTetromino;
 
-void Tetromino_init(Tetromino* const t);
+/// Returns false if game over
+bool Tetromino_init(Tetromino* const t);
 
 void Tetromino_rotate_right(Tetromino* const t);
 void Tetromino_rotate_left(Tetromino* const t);

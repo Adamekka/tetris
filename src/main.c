@@ -34,16 +34,22 @@ int main() {
 
         switch (state) {
             case NEW: {
-                Tetromino_init(&tetromino);
+                bool ok = Tetromino_init(&tetromino);
+
+                if (!ok)
+                    running = false;
+
                 state = MOVING;
                 break;
             }
 
             case MOVING: {
-                bool moved = Game_tetromino_move_down(&game, &tetromino);
+                MoveState moved = Game_tetromino_move_down(&game, &tetromino);
 
-                if (!moved)
+                if (moved == STOP)
                     state = STOPPED;
+                else if (moved == GAME_OVER)
+                    running = false;
 
                 break;
             }
@@ -62,8 +68,10 @@ int main() {
         Tetrominoes_draw(renderer, &tetromino, game.tetrominoes);
 
         SDL_RenderPresent(renderer);
-        SDL_Delay(1000 / 60);
+        SDL_Delay(1000 / 10);
     }
+
+    // TODO: Game over screen
 
     Game_destroy(&game);
     SDL_DestroyRenderer(renderer);

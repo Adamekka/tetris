@@ -12,4 +12,6 @@ typedef optional(Vec2) OptionalVec2;
 
 Vec2 Vec2_add(const Vec2 a, const Vec2 b);
 
+bool Vec2_eq(const Vec2 a, const Vec2 b);
+
 #endif

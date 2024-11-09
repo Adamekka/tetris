@@ -25,9 +25,9 @@ void Game_destroy(Game* const g) {
     g->tetrominoes = NULL;
 }
 
-bool Game_tetromino_move_down(const Game* const g, Tetromino* const t) {
+MoveState Game_tetromino_move_down(const Game* const g, Tetromino* const t) {
     // Check Tetromino can move down
-    for (uint16_t i = 0; i < TILES_IN_TETROMINO; i++) {
+    for (uint8_t i = 0; i < TILES_IN_TETROMINO; i++) {
         const Vec2* tile = &t->tiles[i].value;
 #ifdef DEBUG
         printf("tile->x: %d\n", tile->x);
@@ -37,23 +37,18 @@ bool Game_tetromino_move_down(const Game* const g, Tetromino* const t) {
         assert(tile->x < TILES_X);
         assert(tile->y >= 0);
 
-        if (tile->y > TILES_Y) {
-            // TODO: Show game over screen
-            puts("You lost");
-            assert(false);
-        }
+        if (tile->y > TILES_Y)
+            return GAME_OVER;
 
-        if (tile->y - 1 == highest_tetrominoes[tile->x]) {
-            // Tetromino stopped
-            return false;
-        }
+        if (tile->y - 1 == highest_tetrominoes[tile->x])
+            return STOP;
     }
 
     // Move Tetromino down
-    for (uint16_t i = 0; i < TILES_IN_TETROMINO; i++)
+    for (uint8_t i = 0; i < TILES_IN_TETROMINO; i++)
         t->tiles[i].value.y--;
 
-    return true;
+    return MOVE;
 }
 
 void Game_tetromino_push(Game* const g, const Tetromino t) {
@@ -95,7 +90,7 @@ void Game_update_highest_tetrominoes(const Game* const g) {
         if (!g->tetrominoes[i].present)
             continue;
 
-        for (uint16_t j = 0; j < TILES_IN_TETROMINO; j++) {
+        for (uint8_t j = 0; j < TILES_IN_TETROMINO; j++) {
             const Vec2* tile = &g->tetrominoes[i].value.tiles[j].value;
 
             if (tile->y > highest_tetrominoes[tile->x])
