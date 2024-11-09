@@ -5,7 +5,7 @@ set(CMAKE_C_STANDARD 23)
 
 find_package(SDL2 REQUIRED)
 
-file(GLOB SOURCES src/*.c src/*.h)
+file(GLOB SOURCES src/*.c)
 add_executable(tetris ${SOURCES})
 
 add_compile_options(tetris PRIVATE
@@ -32,6 +32,11 @@ add_compile_options(tetris PRIVATE
     -Werror
     -lm
 )
+
+if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+    target_include_directories(tetris PRIVATE "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include")
+    target_link_directories(tetris PRIVATE "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/lib")
+endif()
 
 target_include_directories(tetris PRIVATE ${SDL2_INCLUDE_DIRS})
 target_link_libraries(tetris ${SDL2_LIBRARIES})
