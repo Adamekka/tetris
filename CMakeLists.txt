@@ -33,10 +33,5 @@ add_compile_options(tetris PRIVATE
     -lm
 )
 
-if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
-    target_include_directories(tetris PRIVATE "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include")
-    target_link_directories(tetris PRIVATE "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/lib")
-endif()
-
 target_include_directories(tetris PRIVATE ${SDL2_INCLUDE_DIRS})
 target_link_libraries(tetris ${SDL2_LIBRARIES})
