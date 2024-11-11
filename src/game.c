@@ -1,6 +1,5 @@
 #include "game.h"
 #include "consts.h"
-#include <assert.h>
 
 #define INITIAL_ALLOCATED_TETROMINOES_COUNT 10
 
@@ -25,32 +24,6 @@ void Game_destroy(Game* const g) {
     g->tetrominoes = NULL;
 }
 
-MoveState Game_tetromino_move_down(const Game* const g, Tetromino* const t) {
-    // Check Tetromino can move down
-    for (uint8_t i = 0; i < TILES_IN_TETROMINO; i++) {
-        const Vec2* tile = &t->tiles[i].value;
-#ifdef DEBUG
-        printf("tile->x: %d\n", tile->x);
-        printf("tile->y: %d\n", tile->y);
-#endif
-        assert(tile->x >= 0);
-        assert(tile->x < TILES_X);
-        assert(tile->y >= 0);
-
-        if (tile->y > TILES_Y)
-            return GAME_OVER;
-
-        if (tile->y - 1 == highest_tetrominoes[tile->x])
-            return STOP;
-    }
-
-    // Move Tetromino down
-    for (uint8_t i = 0; i < TILES_IN_TETROMINO; i++)
-        t->tiles[i].value.y--;
-
-    return MOVE;
-}
-
 void Game_tetromino_push(Game* const g, const Tetromino t) {
     // Replace destroyed Tetromino with new one if possible
     for (uint16_t i = 0; i < tetrominoes_count; i++)
@@ -62,7 +35,7 @@ void Game_tetromino_push(Game* const g, const Tetromino t) {
     // If not, push or allocate more memory
     if (tetrominoes_count >= tetrominoes_allocated) {
         // The C++ way of calculating the new size for std::vector
-        tetrominoes_allocated *= 1.5;
+        tetrominoes_allocated = (uint16_t)round(tetrominoes_allocated * 1.5);
 
         g->tetrominoes = realloc(
             g->tetrominoes, sizeof(*g->tetrominoes) * tetrominoes_allocated

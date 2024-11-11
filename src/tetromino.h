@@ -1,6 +1,7 @@
 #ifndef TETROMINO_H
 #define TETROMINO_H
 
+#include "move_state.h"
 #include "vec2.h"
 #include <SDL2/SDL.h>
 
@@ -40,14 +41,19 @@ typedef optional(Tetromino) OptionalTetromino;
 /// Returns false if game over
 bool Tetromino_init(Tetromino* const t);
 
-void Tetromino_rotate_right(Tetromino* const t);
-void Tetromino_rotate_left(Tetromino* const t);
+void Tetromino_rotate_right(
+    Tetromino* const t, const OptionalTetromino other[]
+);
+void Tetromino_rotate_left(Tetromino* const t, const OptionalTetromino other[]);
 
-/// First Tetromino is the one that is currently moving, the array is the rest
+void Tetromino_move_right(Tetromino* const t, const OptionalTetromino other[]);
+void Tetromino_move_left(Tetromino* const t, const OptionalTetromino other[]);
+MoveState Tetromino_move_down(Tetromino* const t);
+
 void Tetrominoes_draw(
     SDL_Renderer* const renderer,
     const Tetromino* const t,
-    const OptionalTetromino ts[]
+    const OptionalTetromino other[]
 );
 
 #endif

@@ -4,80 +4,86 @@
 
 uint16_t tetromino_ID_count = 0;
 
+extern uint8_t tetrominoes_count;
 extern uint16_t highest_tetrominoes[TILES_X];
 
-void Tetromino_rotate(Tetromino* const t, const Rotation rotation);
+void Tetromino_rotate(
+    Tetromino* const t, const Rotation rotation, const OptionalTetromino other[]
+);
+
+bool Tetromino_can_move(
+    const OptionalVec2 new_pos[TILES_IN_TETROMINO],
+    const OptionalTetromino other[]
+);
 
 bool Tetromino_init(Tetromino* const t) {
     t->id = tetromino_ID_count++;
     t->rotation = UP;
 
-    const TetrominoType tetromino_type
-        = (TetrominoType)rand() % TETROMINO_TYPE_SIZE;
-    t->type = tetromino_type;
+    t->type = (TetrominoType)rand() % TETROMINO_TYPE_SIZE;
 
     // docs/tetrominoes_edited.webp, UP column
     // Tetrominoes are first created in their UP position, then rotated
-    switch (tetromino_type) {
+    switch (t->type) {
         case I: {
-            t->tiles[0] = (OptionalVec2){true, 0, 3}; // ....
-            t->tiles[1] = (OptionalVec2){true, 1, 3}; // 0123
-            t->tiles[2] = (OptionalVec2){true, 2, 3}; // ....
-            t->tiles[3] = (OptionalVec2){true, 3, 3}; // ....
+            t->tiles[0] = (OptionalVec2){true, {0, 3}}; // ....
+            t->tiles[1] = (OptionalVec2){true, {1, 3}}; // 0123
+            t->tiles[2] = (OptionalVec2){true, {2, 3}}; // ....
+            t->tiles[3] = (OptionalVec2){true, {3, 3}}; // ....
             break;
         }
 
         case J: {
-            t->tiles[0] = (OptionalVec2){true, 0, 2}; // 0..
-            t->tiles[1] = (OptionalVec2){true, 0, 1}; // 123
-            t->tiles[2] = (OptionalVec2){true, 1, 1}; // ...
-            t->tiles[3] = (OptionalVec2){true, 2, 1};
+            t->tiles[0] = (OptionalVec2){true, {0, 2}}; // 0..
+            t->tiles[1] = (OptionalVec2){true, {0, 1}}; // 123
+            t->tiles[2] = (OptionalVec2){true, {1, 1}}; // ...
+            t->tiles[3] = (OptionalVec2){true, {2, 1}};
             break;
         }
 
         case L: {
-            t->tiles[0] = (OptionalVec2){true, 2, 2}; // ..0
-            t->tiles[1] = (OptionalVec2){true, 2, 1}; // 321
-            t->tiles[2] = (OptionalVec2){true, 1, 1}; // ...
-            t->tiles[3] = (OptionalVec2){true, 0, 1};
+            t->tiles[0] = (OptionalVec2){true, {2, 2}}; // ..0
+            t->tiles[1] = (OptionalVec2){true, {2, 1}}; // 321
+            t->tiles[2] = (OptionalVec2){true, {1, 1}}; // ...
+            t->tiles[3] = (OptionalVec2){true, {0, 1}};
             break;
         }
 
         case O: {
-            t->tiles[0] = (OptionalVec2){true, 0, 1}; // 01
-            t->tiles[1] = (OptionalVec2){true, 1, 1}; // 23
-            t->tiles[2] = (OptionalVec2){true, 0, 0};
-            t->tiles[3] = (OptionalVec2){true, 1, 0};
+            t->tiles[0] = (OptionalVec2){true, {0, 1}}; // 01
+            t->tiles[1] = (OptionalVec2){true, {1, 1}}; // 23
+            t->tiles[2] = (OptionalVec2){true, {0, 0}};
+            t->tiles[3] = (OptionalVec2){true, {1, 0}};
             break;
         }
 
         case S: {
-            t->tiles[0] = (OptionalVec2){true, 2, 2}; // .10
-            t->tiles[1] = (OptionalVec2){true, 1, 2}; // 32.
-            t->tiles[2] = (OptionalVec2){true, 1, 1}; // ...
-            t->tiles[3] = (OptionalVec2){true, 0, 1};
+            t->tiles[0] = (OptionalVec2){true, {2, 2}}; // .10
+            t->tiles[1] = (OptionalVec2){true, {1, 2}}; // 32.
+            t->tiles[2] = (OptionalVec2){true, {1, 1}}; // ...
+            t->tiles[3] = (OptionalVec2){true, {0, 1}};
             break;
         }
 
         case T: {
-            t->tiles[0] = (OptionalVec2){true, 1, 2}; // .0.
-            t->tiles[1] = (OptionalVec2){true, 0, 1}; // 123
-            t->tiles[2] = (OptionalVec2){true, 1, 1}; // ...
-            t->tiles[3] = (OptionalVec2){true, 2, 1};
+            t->tiles[0] = (OptionalVec2){true, {1, 2}}; // .0.
+            t->tiles[1] = (OptionalVec2){true, {0, 1}}; // 123
+            t->tiles[2] = (OptionalVec2){true, {1, 1}}; // ...
+            t->tiles[3] = (OptionalVec2){true, {2, 1}};
             break;
         }
 
         case Z: {
-            t->tiles[0] = (OptionalVec2){true, 0, 2}; // 01.
-            t->tiles[1] = (OptionalVec2){true, 1, 2}; // .23
-            t->tiles[2] = (OptionalVec2){true, 1, 1}; // ...
-            t->tiles[3] = (OptionalVec2){true, 2, 1};
+            t->tiles[0] = (OptionalVec2){true, {0, 2}}; // 01.
+            t->tiles[1] = (OptionalVec2){true, {1, 2}}; // .23
+            t->tiles[2] = (OptionalVec2){true, {1, 1}}; // ...
+            t->tiles[3] = (OptionalVec2){true, {2, 1}};
             break;
         }
     }
 
     Vec2 offset;
-    switch (tetromino_type) {
+    switch (t->type) {
         case I:
         case O: {
             offset.x = (uint8_t)rand() % (TILES_X - 4);
@@ -109,7 +115,7 @@ bool Tetromino_init(Tetromino* const t) {
     }
 
     const Rotation rotation = (Rotation)rand() % ROTATION_SIZE;
-    Tetromino_rotate(t, rotation);
+    Tetromino_rotate(t, rotation, NULL);
 
     for (uint8_t i = 0; i < TILES_IN_TETROMINO; i++) {
         Vec2* tile = &t->tiles[i].value;
@@ -138,20 +144,31 @@ bool Tetromino_init(Tetromino* const t) {
     return true;
 }
 
-void Tetromino_rotate_right(Tetromino* const t) {
+void Tetromino_rotate_right(
+    Tetromino* const t, const OptionalTetromino other[]
+) {
     const Rotation rotation = (t->rotation + 1) % ROTATION_SIZE;
     assert(rotation < ROTATION_SIZE);
-    Tetromino_rotate(t, rotation);
+    Tetromino_rotate(t, rotation, other);
 }
 
-void Tetromino_rotate_left(Tetromino* const t) {
+void Tetromino_rotate_left(
+    Tetromino* const t, const OptionalTetromino other[]
+) {
     const Rotation rotation = (t->rotation + ROTATION_SIZE - 1) % ROTATION_SIZE;
     assert(rotation >= 0);
-    Tetromino_rotate(t, rotation);
+    Tetromino_rotate(t, rotation, other);
 }
 
 // docs/tetrominoes_edited.webp
-void Tetromino_rotate(Tetromino* const t, const Rotation rotation) {
+void Tetromino_rotate(
+    Tetromino* const t, const Rotation rotation, const OptionalTetromino other[]
+) {
+    OptionalVec2 new_pos[TILES_IN_TETROMINO];
+
+    for (uint8_t i = 0; i < TILES_IN_TETROMINO; i++)
+        new_pos[i] = t->tiles[i];
+
     switch (t->type) {
         case I: {
             switch (t->rotation) {
@@ -163,12 +180,12 @@ void Tetromino_rotate(Tetromino* const t, const Rotation rotation) {
                             // 0123 -> ..1.
                             // ....    ..2.
                             // ....    ..3.
-                            t->tiles[0].value.x += 2;
-                            t->tiles[0].value.y++;
-                            t->tiles[1].value.x++;
-                            t->tiles[2].value.y--;
-                            t->tiles[3].value.x--;
-                            t->tiles[3].value.y -= 2;
+                            new_pos[0].value.x += 2;
+                            new_pos[0].value.y++;
+                            new_pos[1].value.x++;
+                            new_pos[2].value.y--;
+                            new_pos[3].value.x--;
+                            new_pos[3].value.y -= 2;
                             break;
                         }
 
@@ -177,10 +194,10 @@ void Tetromino_rotate(Tetromino* const t, const Rotation rotation) {
                             // 0123 -> ....
                             // ....    0123
                             // ....    ....
-                            t->tiles[0].value.y--;
-                            t->tiles[1].value.y--;
-                            t->tiles[2].value.y--;
-                            t->tiles[3].value.y--;
+                            new_pos[0].value.y--;
+                            new_pos[1].value.y--;
+                            new_pos[2].value.y--;
+                            new_pos[3].value.y--;
                             break;
                         }
 
@@ -189,12 +206,12 @@ void Tetromino_rotate(Tetromino* const t, const Rotation rotation) {
                             // 0123 -> .1..
                             // ....    .2..
                             // ....    .3..
-                            t->tiles[0].value.x++;
-                            t->tiles[0].value.y++;
-                            t->tiles[2].value.x--;
-                            t->tiles[2].value.y--;
-                            t->tiles[3].value.x -= 2;
-                            t->tiles[3].value.y -= 2;
+                            new_pos[0].value.x++;
+                            new_pos[0].value.y++;
+                            new_pos[2].value.x--;
+                            new_pos[2].value.y--;
+                            new_pos[3].value.x -= 2;
+                            new_pos[3].value.y -= 2;
                             break;
                         }
                     }
@@ -208,12 +225,12 @@ void Tetromino_rotate(Tetromino* const t, const Rotation rotation) {
                             // ..1. -> 0123
                             // ..2.    ....
                             // ..3.    ....
-                            t->tiles[0].value.x -= 2;
-                            t->tiles[0].value.y--;
-                            t->tiles[1].value.x--;
-                            t->tiles[2].value.y++;
-                            t->tiles[3].value.x++;
-                            t->tiles[3].value.y += 2;
+                            new_pos[0].value.x -= 2;
+                            new_pos[0].value.y--;
+                            new_pos[1].value.x--;
+                            new_pos[2].value.y++;
+                            new_pos[3].value.x++;
+                            new_pos[3].value.y += 2;
                             break;
                         }
 
@@ -222,12 +239,12 @@ void Tetromino_rotate(Tetromino* const t, const Rotation rotation) {
                             // ..1. -> ....
                             // ..2.    0123
                             // ..3.    ....
-                            t->tiles[0].value.x -= 2;
-                            t->tiles[0].value.y -= 2;
-                            t->tiles[1].value.x--;
-                            t->tiles[1].value.y--;
-                            t->tiles[3].value.x++;
-                            t->tiles[3].value.y++;
+                            new_pos[0].value.x -= 2;
+                            new_pos[0].value.y -= 2;
+                            new_pos[1].value.x--;
+                            new_pos[1].value.y--;
+                            new_pos[3].value.x++;
+                            new_pos[3].value.y++;
                             break;
                         }
 
@@ -244,12 +261,12 @@ void Tetromino_rotate(Tetromino* const t, const Rotation rotation) {
                             // .... -> ..1.
                             // 0123    ..2.
                             // ....    ..3.
-                            t->tiles[0].value.x += 2;
-                            t->tiles[0].value.y += 2;
-                            t->tiles[1].value.x++;
-                            t->tiles[1].value.y++;
-                            t->tiles[3].value.x--;
-                            t->tiles[3].value.y--;
+                            new_pos[0].value.x += 2;
+                            new_pos[0].value.y += 2;
+                            new_pos[1].value.x++;
+                            new_pos[1].value.y++;
+                            new_pos[3].value.x--;
+                            new_pos[3].value.y--;
                             break;
                         }
 
@@ -258,12 +275,12 @@ void Tetromino_rotate(Tetromino* const t, const Rotation rotation) {
                             // .... -> .1..
                             // 0123    .2..
                             // ....    .3..
-                            t->tiles[0].value.x++;
-                            t->tiles[0].value.y += 2;
-                            t->tiles[1].value.y++;
-                            t->tiles[2].value.x--;
-                            t->tiles[3].value.x -= 2;
-                            t->tiles[3].value.y--;
+                            new_pos[0].value.x++;
+                            new_pos[0].value.y += 2;
+                            new_pos[1].value.y++;
+                            new_pos[2].value.x--;
+                            new_pos[3].value.x -= 2;
+                            new_pos[3].value.y--;
                             break;
                         }
 
@@ -280,12 +297,12 @@ void Tetromino_rotate(Tetromino* const t, const Rotation rotation) {
                             // .1.. -> 0123
                             // .2..    ....
                             // .3..    ....
-                            t->tiles[0].value.x--;
-                            t->tiles[0].value.y--;
-                            t->tiles[2].value.x++;
-                            t->tiles[2].value.y++;
-                            t->tiles[3].value.x += 2;
-                            t->tiles[3].value.y += 2;
+                            new_pos[0].value.x--;
+                            new_pos[0].value.y--;
+                            new_pos[2].value.x++;
+                            new_pos[2].value.y++;
+                            new_pos[3].value.x += 2;
+                            new_pos[3].value.y += 2;
                             break;
                         }
 
@@ -294,12 +311,12 @@ void Tetromino_rotate(Tetromino* const t, const Rotation rotation) {
                             // .1.. -> ....
                             // .2..    0123
                             // .3..    ....
-                            t->tiles[0].value.x--;
-                            t->tiles[0].value.y -= 2;
-                            t->tiles[1].value.y--;
-                            t->tiles[2].value.x++;
-                            t->tiles[3].value.x += 2;
-                            t->tiles[3].value.y++;
+                            new_pos[0].value.x--;
+                            new_pos[0].value.y -= 2;
+                            new_pos[1].value.y--;
+                            new_pos[2].value.x++;
+                            new_pos[3].value.x += 2;
+                            new_pos[3].value.y++;
                             break;
                         }
 
@@ -321,11 +338,11 @@ void Tetromino_rotate(Tetromino* const t, const Rotation rotation) {
                             // 0..    .10
                             // 123 -> .2.
                             // ...    .3.
-                            t->tiles[0].value.x += 2;
-                            t->tiles[1].value.x++;
-                            t->tiles[1].value.y++;
-                            t->tiles[3].value.x--;
-                            t->tiles[3].value.y--;
+                            new_pos[0].value.x += 2;
+                            new_pos[1].value.x++;
+                            new_pos[1].value.y++;
+                            new_pos[3].value.x--;
+                            new_pos[3].value.y--;
                             break;
                         }
 
@@ -333,10 +350,10 @@ void Tetromino_rotate(Tetromino* const t, const Rotation rotation) {
                             // 0..    ...
                             // 123 -> 321
                             // ...    ..0
-                            t->tiles[0].value.x += 2;
-                            t->tiles[0].value.y -= 2;
-                            t->tiles[1].value.x += 2;
-                            t->tiles[3].value.x -= 2;
+                            new_pos[0].value.x += 2;
+                            new_pos[0].value.y -= 2;
+                            new_pos[1].value.x += 2;
+                            new_pos[3].value.x -= 2;
                             break;
                         }
 
@@ -344,11 +361,11 @@ void Tetromino_rotate(Tetromino* const t, const Rotation rotation) {
                             // 0..    .3.
                             // 123 -> .2.
                             // ...    01.
-                            t->tiles[0].value.y -= 2;
-                            t->tiles[1].value.x++;
-                            t->tiles[1].value.y--;
-                            t->tiles[3].value.x--;
-                            t->tiles[3].value.y++;
+                            new_pos[0].value.y -= 2;
+                            new_pos[1].value.x++;
+                            new_pos[1].value.y--;
+                            new_pos[3].value.x--;
+                            new_pos[3].value.y++;
                             break;
                         }
                     }
@@ -361,11 +378,11 @@ void Tetromino_rotate(Tetromino* const t, const Rotation rotation) {
                             // .10    0..
                             // .2. -> 123
                             // .3.    ...
-                            t->tiles[0].value.x -= 2;
-                            t->tiles[1].value.x--;
-                            t->tiles[1].value.y--;
-                            t->tiles[3].value.x++;
-                            t->tiles[3].value.y++;
+                            new_pos[0].value.x -= 2;
+                            new_pos[1].value.x--;
+                            new_pos[1].value.y--;
+                            new_pos[3].value.x++;
+                            new_pos[3].value.y++;
                             break;
                         }
 
@@ -373,11 +390,11 @@ void Tetromino_rotate(Tetromino* const t, const Rotation rotation) {
                             // .10    ...
                             // .2. -> 321
                             // .3.    ..0
-                            t->tiles[0].value.y -= 2;
-                            t->tiles[1].value.x++;
-                            t->tiles[1].value.y--;
-                            t->tiles[3].value.x--;
-                            t->tiles[3].value.y++;
+                            new_pos[0].value.y -= 2;
+                            new_pos[1].value.x++;
+                            new_pos[1].value.y--;
+                            new_pos[3].value.x--;
+                            new_pos[3].value.y++;
                             break;
                         }
 
@@ -393,11 +410,11 @@ void Tetromino_rotate(Tetromino* const t, const Rotation rotation) {
                             // ...    .10
                             // 321 -> .2.
                             // ..0    .3.
-                            t->tiles[0].value.y += 2;
-                            t->tiles[1].value.x--;
-                            t->tiles[1].value.y++;
-                            t->tiles[3].value.x++;
-                            t->tiles[3].value.y--;
+                            new_pos[0].value.y += 2;
+                            new_pos[1].value.x--;
+                            new_pos[1].value.y++;
+                            new_pos[3].value.x++;
+                            new_pos[3].value.y--;
                             break;
                         }
 
@@ -405,11 +422,11 @@ void Tetromino_rotate(Tetromino* const t, const Rotation rotation) {
                             // ...    .3.
                             // 321 -> .2.
                             // ..0    01.
-                            t->tiles[0].value.x -= 2;
-                            t->tiles[1].value.x--;
-                            t->tiles[1].value.y--;
-                            t->tiles[3].value.x++;
-                            t->tiles[3].value.y++;
+                            new_pos[0].value.x -= 2;
+                            new_pos[1].value.x--;
+                            new_pos[1].value.y--;
+                            new_pos[3].value.x++;
+                            new_pos[3].value.y++;
                             break;
                         }
 
@@ -425,11 +442,11 @@ void Tetromino_rotate(Tetromino* const t, const Rotation rotation) {
                             // .3.    0..
                             // .2. -> 123
                             // 01.    ...
-                            t->tiles[0].value.y += 2;
-                            t->tiles[1].value.x--;
-                            t->tiles[1].value.y++;
-                            t->tiles[3].value.x++;
-                            t->tiles[3].value.y--;
+                            new_pos[0].value.y += 2;
+                            new_pos[1].value.x--;
+                            new_pos[1].value.y++;
+                            new_pos[3].value.x++;
+                            new_pos[3].value.y--;
                             break;
                         }
 
@@ -437,11 +454,11 @@ void Tetromino_rotate(Tetromino* const t, const Rotation rotation) {
                             // .3.    ...
                             // .2. -> 321
                             // 01.    ..0
-                            t->tiles[0].value.x += 2;
-                            t->tiles[1].value.x++;
-                            t->tiles[1].value.y++;
-                            t->tiles[3].value.x--;
-                            t->tiles[3].value.y--;
+                            new_pos[0].value.x += 2;
+                            new_pos[1].value.x++;
+                            new_pos[1].value.y++;
+                            new_pos[3].value.x--;
+                            new_pos[3].value.y--;
                             break;
                         }
 
@@ -463,11 +480,11 @@ void Tetromino_rotate(Tetromino* const t, const Rotation rotation) {
                             // ..0    .3.
                             // 321 -> .2.
                             // ...    .10
-                            t->tiles[0].value.y -= 2;
-                            t->tiles[1].value.x--;
-                            t->tiles[1].value.y--;
-                            t->tiles[3].value.x++;
-                            t->tiles[3].value.y++;
+                            new_pos[0].value.y -= 2;
+                            new_pos[1].value.x--;
+                            new_pos[1].value.y--;
+                            new_pos[3].value.x++;
+                            new_pos[3].value.y++;
                             break;
                         }
 
@@ -475,10 +492,10 @@ void Tetromino_rotate(Tetromino* const t, const Rotation rotation) {
                             // ..0    ...
                             // 321 -> 123
                             // ...    0..
-                            t->tiles[0].value.x -= 2;
-                            t->tiles[0].value.y -= 2;
-                            t->tiles[1].value.x -= 2;
-                            t->tiles[3].value.x += 2;
+                            new_pos[0].value.x -= 2;
+                            new_pos[0].value.y -= 2;
+                            new_pos[1].value.x -= 2;
+                            new_pos[3].value.x += 2;
                             break;
                         }
 
@@ -486,11 +503,11 @@ void Tetromino_rotate(Tetromino* const t, const Rotation rotation) {
                             // ..0    01.
                             // 321 -> .2.
                             // ...    .3.
-                            t->tiles[0].value.x -= 2;
-                            t->tiles[1].value.x--;
-                            t->tiles[1].value.y++;
-                            t->tiles[3].value.x++;
-                            t->tiles[3].value.y--;
+                            new_pos[0].value.x -= 2;
+                            new_pos[1].value.x--;
+                            new_pos[1].value.y++;
+                            new_pos[3].value.x++;
+                            new_pos[3].value.y--;
                             break;
                         }
                     }
@@ -503,11 +520,11 @@ void Tetromino_rotate(Tetromino* const t, const Rotation rotation) {
                             // .3.    ..0
                             // .2. -> 321
                             // .10    ...
-                            t->tiles[0].value.y += 2;
-                            t->tiles[1].value.x++;
-                            t->tiles[1].value.y++;
-                            t->tiles[3].value.x--;
-                            t->tiles[3].value.y--;
+                            new_pos[0].value.y += 2;
+                            new_pos[1].value.x++;
+                            new_pos[1].value.y++;
+                            new_pos[3].value.x--;
+                            new_pos[3].value.y--;
                             break;
                         }
 
@@ -515,11 +532,11 @@ void Tetromino_rotate(Tetromino* const t, const Rotation rotation) {
                             // .3.    ...
                             // .2. -> 123
                             // .10    0..
-                            t->tiles[0].value.x -= 2;
-                            t->tiles[1].value.x--;
-                            t->tiles[1].value.y++;
-                            t->tiles[3].value.x++;
-                            t->tiles[3].value.y--;
+                            new_pos[0].value.x -= 2;
+                            new_pos[1].value.x--;
+                            new_pos[1].value.y++;
+                            new_pos[3].value.x++;
+                            new_pos[3].value.y--;
                             break;
                         }
 
@@ -535,11 +552,11 @@ void Tetromino_rotate(Tetromino* const t, const Rotation rotation) {
                             // ...    .3.
                             // 123 -> .2.
                             // 0..    .10
-                            t->tiles[0].value.x += 2;
-                            t->tiles[1].value.x++;
-                            t->tiles[1].value.y--;
-                            t->tiles[3].value.x--;
-                            t->tiles[3].value.y++;
+                            new_pos[0].value.x += 2;
+                            new_pos[1].value.x++;
+                            new_pos[1].value.y--;
+                            new_pos[3].value.x--;
+                            new_pos[3].value.y++;
                             break;
                         }
 
@@ -547,11 +564,11 @@ void Tetromino_rotate(Tetromino* const t, const Rotation rotation) {
                             // ...    01.
                             // 123 -> .2.
                             // 0..    .3.
-                            t->tiles[0].value.y += 2;
-                            t->tiles[1].value.x++;
-                            t->tiles[1].value.y++;
-                            t->tiles[3].value.x--;
-                            t->tiles[3].value.y--;
+                            new_pos[0].value.y += 2;
+                            new_pos[1].value.x++;
+                            new_pos[1].value.y++;
+                            new_pos[3].value.x--;
+                            new_pos[3].value.y--;
                             break;
                         }
 
@@ -567,11 +584,11 @@ void Tetromino_rotate(Tetromino* const t, const Rotation rotation) {
                             // 01.    ..0
                             // .2. -> 321
                             // .3.    ...
-                            t->tiles[0].value.x += 2;
-                            t->tiles[1].value.x++;
-                            t->tiles[1].value.y--;
-                            t->tiles[3].value.x--;
-                            t->tiles[3].value.y++;
+                            new_pos[0].value.x += 2;
+                            new_pos[1].value.x++;
+                            new_pos[1].value.y--;
+                            new_pos[3].value.x--;
+                            new_pos[3].value.y++;
                             break;
                         }
 
@@ -579,11 +596,11 @@ void Tetromino_rotate(Tetromino* const t, const Rotation rotation) {
                             // 01.    ...
                             // .2. -> 123
                             // .3.    0..
-                            t->tiles[0].value.y -= 2;
-                            t->tiles[1].value.x--;
-                            t->tiles[1].value.y--;
-                            t->tiles[3].value.x++;
-                            t->tiles[3].value.y++;
+                            new_pos[0].value.y -= 2;
+                            new_pos[1].value.x--;
+                            new_pos[1].value.y--;
+                            new_pos[3].value.x++;
+                            new_pos[3].value.y++;
                             break;
                         }
 
@@ -607,11 +624,11 @@ void Tetromino_rotate(Tetromino* const t, const Rotation rotation) {
                             // .10    .3.
                             // 32. -> .21
                             // ...    ..0
-                            t->tiles[0].value.y -= 2;
-                            t->tiles[1].value.x++;
-                            t->tiles[1].value.y--;
-                            t->tiles[3].value.x++;
-                            t->tiles[3].value.y++;
+                            new_pos[0].value.y -= 2;
+                            new_pos[1].value.x++;
+                            new_pos[1].value.y--;
+                            new_pos[3].value.x++;
+                            new_pos[3].value.y++;
                             break;
                         }
 
@@ -619,10 +636,10 @@ void Tetromino_rotate(Tetromino* const t, const Rotation rotation) {
                             // .10    ...
                             // 32. -> .23
                             // ...    01.
-                            t->tiles[0].value.x -= 2;
-                            t->tiles[0].value.y -= 2;
-                            t->tiles[1].value.y -= 2;
-                            t->tiles[3].value.x += 2;
+                            new_pos[0].value.x -= 2;
+                            new_pos[0].value.y -= 2;
+                            new_pos[1].value.y -= 2;
+                            new_pos[3].value.x += 2;
                             break;
                         }
 
@@ -630,11 +647,11 @@ void Tetromino_rotate(Tetromino* const t, const Rotation rotation) {
                             // .10    0..
                             // 32. -> 12.
                             // ...    .3.
-                            t->tiles[0].value.x -= 2;
-                            t->tiles[1].value.x--;
-                            t->tiles[1].value.y--;
-                            t->tiles[3].value.x++;
-                            t->tiles[3].value.y--;
+                            new_pos[0].value.x -= 2;
+                            new_pos[1].value.x--;
+                            new_pos[1].value.y--;
+                            new_pos[3].value.x++;
+                            new_pos[3].value.y--;
                             break;
                         }
                     }
@@ -647,11 +664,11 @@ void Tetromino_rotate(Tetromino* const t, const Rotation rotation) {
                             // .3.    .10
                             // .21 -> 32.
                             // ..0    ...
-                            t->tiles[0].value.y += 2;
-                            t->tiles[1].value.x--;
-                            t->tiles[1].value.y++;
-                            t->tiles[3].value.x--;
-                            t->tiles[3].value.y--;
+                            new_pos[0].value.y += 2;
+                            new_pos[1].value.x--;
+                            new_pos[1].value.y++;
+                            new_pos[3].value.x--;
+                            new_pos[3].value.y--;
                             break;
                         }
 
@@ -659,11 +676,11 @@ void Tetromino_rotate(Tetromino* const t, const Rotation rotation) {
                             // .3.    ...
                             // .21 -> .23
                             // ..0    01.
-                            t->tiles[0].value.x -= 2;
-                            t->tiles[1].value.x--;
-                            t->tiles[1].value.y--;
-                            t->tiles[3].value.x--;
-                            t->tiles[3].value.y++;
+                            new_pos[0].value.x -= 2;
+                            new_pos[1].value.x--;
+                            new_pos[1].value.y--;
+                            new_pos[3].value.x++;
+                            new_pos[3].value.y--;
                             break;
                         }
 
@@ -679,11 +696,11 @@ void Tetromino_rotate(Tetromino* const t, const Rotation rotation) {
                             // ...    .3.
                             // .23 -> .21
                             // 01.    ..0
-                            t->tiles[0].value.y += 2;
-                            t->tiles[1].value.x++;
-                            t->tiles[1].value.y++;
-                            t->tiles[3].value.x--;
-                            t->tiles[3].value.y++;
+                            new_pos[0].value.x += 2;
+                            new_pos[1].value.x++;
+                            new_pos[1].value.y++;
+                            new_pos[3].value.x--;
+                            new_pos[3].value.y++;
                             break;
                         }
 
@@ -691,11 +708,11 @@ void Tetromino_rotate(Tetromino* const t, const Rotation rotation) {
                             // ...    0..
                             // .23 -> 12.
                             // 01.    .3.
-                            t->tiles[0].value.y += 2;
-                            t->tiles[1].value.x--;
-                            t->tiles[1].value.y++;
-                            t->tiles[3].value.x--;
-                            t->tiles[3].value.y--;
+                            new_pos[0].value.y += 2;
+                            new_pos[1].value.x--;
+                            new_pos[1].value.y++;
+                            new_pos[3].value.x--;
+                            new_pos[3].value.y--;
                             break;
                         }
 
@@ -711,11 +728,11 @@ void Tetromino_rotate(Tetromino* const t, const Rotation rotation) {
                             // 0..    .10
                             // 12. -> 32.
                             // .3.    ...
-                            t->tiles[0].value.x += 2;
-                            t->tiles[1].value.x++;
-                            t->tiles[1].value.y++;
-                            t->tiles[3].value.x--;
-                            t->tiles[3].value.y++;
+                            new_pos[0].value.x += 2;
+                            new_pos[1].value.x++;
+                            new_pos[1].value.y++;
+                            new_pos[3].value.x--;
+                            new_pos[3].value.y++;
                             break;
                         }
 
@@ -723,11 +740,11 @@ void Tetromino_rotate(Tetromino* const t, const Rotation rotation) {
                             // 0..    ...
                             // 12. -> .23
                             // .3.    01.
-                            t->tiles[0].value.y -= 2;
-                            t->tiles[1].value.x++;
-                            t->tiles[1].value.y--;
-                            t->tiles[3].value.x++;
-                            t->tiles[3].value.y++;
+                            new_pos[0].value.y -= 2;
+                            new_pos[1].value.x++;
+                            new_pos[1].value.y--;
+                            new_pos[3].value.x++;
+                            new_pos[3].value.y++;
                             break;
                         }
 
@@ -749,12 +766,12 @@ void Tetromino_rotate(Tetromino* const t, const Rotation rotation) {
                             // .0.    .1.
                             // 123 -> .20
                             // ...    .3.
-                            t->tiles[0].value.x++;
-                            t->tiles[0].value.y--;
-                            t->tiles[1].value.x++;
-                            t->tiles[1].value.y++;
-                            t->tiles[3].value.x--;
-                            t->tiles[3].value.y--;
+                            new_pos[0].value.x++;
+                            new_pos[0].value.y--;
+                            new_pos[1].value.x++;
+                            new_pos[1].value.y++;
+                            new_pos[3].value.x--;
+                            new_pos[3].value.y--;
                             break;
                         }
 
@@ -762,9 +779,9 @@ void Tetromino_rotate(Tetromino* const t, const Rotation rotation) {
                             // .0.    ...
                             // 123 -> 321
                             // ...    .0.
-                            t->tiles[0].value.y -= 2;
-                            t->tiles[1].value.x += 2;
-                            t->tiles[3].value.x -= 2;
+                            new_pos[0].value.y -= 2;
+                            new_pos[1].value.x += 2;
+                            new_pos[3].value.x -= 2;
                             break;
                         }
 
@@ -772,12 +789,12 @@ void Tetromino_rotate(Tetromino* const t, const Rotation rotation) {
                             // .0.    .3.
                             // 123 -> 02.
                             // ...    .1.
-                            t->tiles[0].value.x--;
-                            t->tiles[0].value.y--;
-                            t->tiles[1].value.x++;
-                            t->tiles[1].value.y--;
-                            t->tiles[3].value.x--;
-                            t->tiles[3].value.y++;
+                            new_pos[0].value.x--;
+                            new_pos[0].value.y--;
+                            new_pos[1].value.x++;
+                            new_pos[1].value.y--;
+                            new_pos[3].value.x--;
+                            new_pos[3].value.y++;
                             break;
                         }
                     }
@@ -790,12 +807,12 @@ void Tetromino_rotate(Tetromino* const t, const Rotation rotation) {
                             // .1.    .0.
                             // .20 -> 123
                             // .3.    ...
-                            t->tiles[0].value.x--;
-                            t->tiles[0].value.y++;
-                            t->tiles[1].value.x--;
-                            t->tiles[1].value.y--;
-                            t->tiles[3].value.x++;
-                            t->tiles[3].value.y++;
+                            new_pos[0].value.x--;
+                            new_pos[0].value.y++;
+                            new_pos[1].value.x--;
+                            new_pos[1].value.y--;
+                            new_pos[3].value.x++;
+                            new_pos[3].value.y++;
                             break;
                         }
 
@@ -803,12 +820,12 @@ void Tetromino_rotate(Tetromino* const t, const Rotation rotation) {
                             // .1.    ...
                             // .20 -> 321
                             // .3.    .0.
-                            t->tiles[0].value.x--;
-                            t->tiles[0].value.y--;
-                            t->tiles[1].value.x++;
-                            t->tiles[1].value.y--;
-                            t->tiles[3].value.x--;
-                            t->tiles[3].value.y++;
+                            new_pos[0].value.x--;
+                            new_pos[0].value.y--;
+                            new_pos[1].value.x++;
+                            new_pos[1].value.y--;
+                            new_pos[3].value.x--;
+                            new_pos[3].value.y++;
                             break;
                         }
 
@@ -824,12 +841,12 @@ void Tetromino_rotate(Tetromino* const t, const Rotation rotation) {
                             // ...    .1.
                             // 321 -> .20
                             // .0.    .3.
-                            t->tiles[0].value.x++;
-                            t->tiles[0].value.y++;
-                            t->tiles[1].value.x--;
-                            t->tiles[1].value.y++;
-                            t->tiles[3].value.x++;
-                            t->tiles[3].value.y--;
+                            new_pos[0].value.x++;
+                            new_pos[0].value.y++;
+                            new_pos[1].value.x--;
+                            new_pos[1].value.y++;
+                            new_pos[3].value.x++;
+                            new_pos[3].value.y--;
                             break;
                         }
 
@@ -837,12 +854,12 @@ void Tetromino_rotate(Tetromino* const t, const Rotation rotation) {
                             // ...    .3.
                             // 321 -> 02.
                             // .0.    .1.
-                            t->tiles[0].value.x--;
-                            t->tiles[0].value.y++;
-                            t->tiles[1].value.x--;
-                            t->tiles[1].value.y--;
-                            t->tiles[3].value.x++;
-                            t->tiles[3].value.y++;
+                            new_pos[0].value.x--;
+                            new_pos[0].value.y++;
+                            new_pos[1].value.x--;
+                            new_pos[1].value.y--;
+                            new_pos[3].value.x++;
+                            new_pos[3].value.y++;
                             break;
                         }
 
@@ -858,12 +875,12 @@ void Tetromino_rotate(Tetromino* const t, const Rotation rotation) {
                             // .3.    .0.
                             // 02. -> 123
                             // .1.    ...
-                            t->tiles[0].value.x++;
-                            t->tiles[0].value.y++;
-                            t->tiles[1].value.x--;
-                            t->tiles[1].value.y++;
-                            t->tiles[3].value.x++;
-                            t->tiles[3].value.y--;
+                            new_pos[0].value.x++;
+                            new_pos[0].value.y++;
+                            new_pos[1].value.x--;
+                            new_pos[1].value.y++;
+                            new_pos[3].value.x++;
+                            new_pos[3].value.y--;
                             break;
                         }
 
@@ -871,12 +888,12 @@ void Tetromino_rotate(Tetromino* const t, const Rotation rotation) {
                             // .3.    ...
                             // 02. -> 321
                             // .1.    .0.
-                            t->tiles[0].value.x++;
-                            t->tiles[0].value.y--;
-                            t->tiles[1].value.x++;
-                            t->tiles[1].value.y++;
-                            t->tiles[3].value.x--;
-                            t->tiles[3].value.y--;
+                            new_pos[0].value.x++;
+                            new_pos[0].value.y--;
+                            new_pos[1].value.x++;
+                            new_pos[1].value.y++;
+                            new_pos[3].value.x--;
+                            new_pos[3].value.y--;
                             break;
                         }
 
@@ -898,11 +915,11 @@ void Tetromino_rotate(Tetromino* const t, const Rotation rotation) {
                             // 01.    ..0
                             // .23 -> .21
                             // ...    .3.
-                            t->tiles[0].value.x += 2;
-                            t->tiles[1].value.x++;
-                            t->tiles[1].value.y--;
-                            t->tiles[3].value.x--;
-                            t->tiles[3].value.y--;
+                            new_pos[0].value.x += 2;
+                            new_pos[1].value.x++;
+                            new_pos[1].value.y--;
+                            new_pos[3].value.x--;
+                            new_pos[3].value.y--;
                             break;
                         }
 
@@ -910,10 +927,10 @@ void Tetromino_rotate(Tetromino* const t, const Rotation rotation) {
                             // 01.    ...
                             // .23 -> 32.
                             // ...    .10
-                            t->tiles[0].value.x += 2;
-                            t->tiles[0].value.y -= 2;
-                            t->tiles[1].value.y -= 2;
-                            t->tiles[3].value.x -= 2;
+                            new_pos[0].value.x += 2;
+                            new_pos[0].value.y -= 2;
+                            new_pos[1].value.y -= 2;
+                            new_pos[3].value.x -= 2;
                             break;
                         }
 
@@ -921,11 +938,11 @@ void Tetromino_rotate(Tetromino* const t, const Rotation rotation) {
                             // 01.    .3.
                             // .23 -> 12.
                             // ...    0..
-                            t->tiles[0].value.y -= 2;
-                            t->tiles[1].value.x--;
-                            t->tiles[1].value.y--;
-                            t->tiles[3].value.x--;
-                            t->tiles[3].value.y++;
+                            new_pos[0].value.y -= 2;
+                            new_pos[1].value.x--;
+                            new_pos[1].value.y--;
+                            new_pos[3].value.x--;
+                            new_pos[3].value.y++;
                             break;
                         }
                     }
@@ -938,11 +955,11 @@ void Tetromino_rotate(Tetromino* const t, const Rotation rotation) {
                             // ..0    01.
                             // .21 -> .23
                             // .3.    ...
-                            t->tiles[0].value.x -= 2;
-                            t->tiles[1].value.x--;
-                            t->tiles[1].value.y++;
-                            t->tiles[3].value.x++;
-                            t->tiles[3].value.y++;
+                            new_pos[0].value.x -= 2;
+                            new_pos[1].value.x--;
+                            new_pos[1].value.y++;
+                            new_pos[3].value.x++;
+                            new_pos[3].value.y++;
                             break;
                         }
 
@@ -950,11 +967,11 @@ void Tetromino_rotate(Tetromino* const t, const Rotation rotation) {
                             // ..0    ...
                             // .21 -> 32.
                             // .3.    .10
-                            t->tiles[0].value.y -= 2;
-                            t->tiles[1].value.x--;
-                            t->tiles[1].value.y--;
-                            t->tiles[3].value.x--;
-                            t->tiles[3].value.y++;
+                            new_pos[0].value.y -= 2;
+                            new_pos[1].value.x--;
+                            new_pos[1].value.y--;
+                            new_pos[3].value.x--;
+                            new_pos[3].value.y++;
                             break;
                         }
 
@@ -970,11 +987,11 @@ void Tetromino_rotate(Tetromino* const t, const Rotation rotation) {
                             // ...    ..0
                             // 32. -> .21
                             // .10    .3.
-                            t->tiles[0].value.y += 2;
-                            t->tiles[1].value.x++;
-                            t->tiles[1].value.y++;
-                            t->tiles[3].value.x++;
-                            t->tiles[3].value.y--;
+                            new_pos[0].value.y += 2;
+                            new_pos[1].value.x++;
+                            new_pos[1].value.y++;
+                            new_pos[3].value.x++;
+                            new_pos[3].value.y--;
                             break;
                         }
 
@@ -982,11 +999,11 @@ void Tetromino_rotate(Tetromino* const t, const Rotation rotation) {
                             // ...    .3.
                             // 32. -> 12.
                             // .10    0..
-                            t->tiles[0].value.x -= 2;
-                            t->tiles[1].value.x--;
-                            t->tiles[1].value.y++;
-                            t->tiles[3].value.x++;
-                            t->tiles[3].value.y++;
+                            new_pos[0].value.x -= 2;
+                            new_pos[1].value.x--;
+                            new_pos[1].value.y++;
+                            new_pos[3].value.x++;
+                            new_pos[3].value.y++;
                             break;
                         }
 
@@ -1002,11 +1019,11 @@ void Tetromino_rotate(Tetromino* const t, const Rotation rotation) {
                             // .3.    01.
                             // 12. -> .23
                             // 0..    ...
-                            t->tiles[0].value.y += 2;
-                            t->tiles[1].value.x++;
-                            t->tiles[1].value.y++;
-                            t->tiles[3].value.x++;
-                            t->tiles[3].value.y--;
+                            new_pos[0].value.y += 2;
+                            new_pos[1].value.x++;
+                            new_pos[1].value.y++;
+                            new_pos[3].value.x++;
+                            new_pos[3].value.y--;
                             break;
                         }
 
@@ -1014,11 +1031,11 @@ void Tetromino_rotate(Tetromino* const t, const Rotation rotation) {
                             // .3.    ...
                             // 12. -> 32.
                             // 0..    .10
-                            t->tiles[0].value.x += 2;
-                            t->tiles[1].value.x++;
-                            t->tiles[1].value.y--;
-                            t->tiles[3].value.x--;
-                            t->tiles[3].value.y--;
+                            new_pos[0].value.x += 2;
+                            new_pos[1].value.x++;
+                            new_pos[1].value.y--;
+                            new_pos[3].value.x--;
+                            new_pos[3].value.y--;
                             break;
                         }
 
@@ -1032,7 +1049,104 @@ void Tetromino_rotate(Tetromino* const t, const Rotation rotation) {
         }
     }
 
-    t->rotation = rotation;
+    if (Tetromino_can_move(new_pos, other)) {
+        for (uint8_t i = 0; i < TILES_IN_TETROMINO; i++)
+            t->tiles[i] = new_pos[i];
+
+        t->rotation = rotation;
+    }
+}
+
+void Tetromino_move_right(Tetromino* const t, const OptionalTetromino other[]) {
+    OptionalVec2 new_pos[TILES_IN_TETROMINO];
+
+    for (uint8_t i = 0; i < TILES_IN_TETROMINO; i++) {
+        new_pos[i] = t->tiles[i];
+        new_pos[i].value.x++;
+    }
+
+    if (Tetromino_can_move(new_pos, other))
+        for (uint8_t i = 0; i < TILES_IN_TETROMINO; i++)
+            t->tiles[i].value.x++;
+}
+
+void Tetromino_move_left(Tetromino* const t, const OptionalTetromino other[]) {
+    OptionalVec2 new_pos[TILES_IN_TETROMINO];
+
+    for (uint8_t i = 0; i < TILES_IN_TETROMINO; i++) {
+        new_pos[i] = t->tiles[i];
+        new_pos[i].value.x--;
+    }
+
+    if (Tetromino_can_move(new_pos, other))
+        for (uint8_t i = 0; i < TILES_IN_TETROMINO; i++)
+            t->tiles[i].value.x--;
+}
+
+MoveState Tetromino_move_down(Tetromino* const t) {
+    // Check Tetromino can move down
+    for (uint8_t i = 0; i < TILES_IN_TETROMINO; i++) {
+        const Vec2* tile = &t->tiles[i].value;
+#ifdef DEBUG
+        printf("tile->x: %d\n", tile->x);
+        printf("tile->y: %d\n", tile->y);
+#endif
+        assert(tile->x >= 0);
+        assert(tile->x < TILES_X);
+        assert(tile->y >= 0);
+
+        if (tile->y > TILES_Y)
+            return GAME_OVER;
+
+        if (tile->y - 1 == highest_tetrominoes[tile->x])
+            return STOP;
+    }
+
+    // Move Tetromino down
+    for (uint8_t i = 0; i < TILES_IN_TETROMINO; i++)
+        t->tiles[i].value.y--;
+
+    return MOVE;
+}
+
+bool Tetromino_can_move(
+    const OptionalVec2 new_pos[TILES_IN_TETROMINO],
+    const OptionalTetromino other[]
+) {
+    if (other == NULL)
+        return true;
+
+    for (uint8_t i = 0; i < TILES_IN_TETROMINO; i++) {
+        if (!&new_pos->present)
+            continue;
+
+        const Vec2* tile = &new_pos[i].value;
+
+        if (tile->y - 1 < 0)
+            return false;
+
+        if (tile->x < 0 || tile->x >= TILES_X)
+            return false;
+
+        for (uint8_t j = 0; j < tetrominoes_count; j++) {
+            if (!other[j].present)
+                continue;
+
+            const Tetromino* o = &other[j].value;
+
+            for (uint8_t k = 0; k < TILES_IN_TETROMINO; k++) {
+                if (!o->tiles[k].present)
+                    continue;
+
+                const Vec2* other_tile = &o->tiles[k].value;
+
+                if (tile->x == other_tile->x && tile->y == other_tile->y)
+                    return false;
+            }
+        }
+    }
+
+    return true;
 }
 
 // 0x00FFFF
@@ -1069,8 +1183,6 @@ void Tetromino_rotate(Tetromino* const t, const Rotation rotation) {
 #define Z_COLOR_R 0xFF
 #define Z_COLOR_G 0x00
 #define Z_COLOR_B 0x00
-
-extern uint8_t tetrominoes_count;
 
 void Tetromino_draw(SDL_Renderer* const renderer, const Tetromino* t) {
     switch (t->type) {
@@ -1144,14 +1256,14 @@ void Tetromino_draw(SDL_Renderer* const renderer, const Tetromino* t) {
 void Tetrominoes_draw(
     SDL_Renderer* const renderer,
     const Tetromino* const t,
-    const OptionalTetromino ts[]
+    const OptionalTetromino other[]
 ) {
     Tetromino_draw(renderer, t);
 
     for (uint8_t i = 0; i < tetrominoes_count; i++) {
-        const OptionalTetromino* const t = &ts[i];
+        const OptionalTetromino* const o = &other[i];
 
-        if (t->present)
-            Tetromino_draw(renderer, &t->value);
+        if (o->present)
+            Tetromino_draw(renderer, &o->value);
     }
 }
