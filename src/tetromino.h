@@ -30,7 +30,6 @@ typedef enum {
 #define TILES_IN_TETROMINO 4
 
 typedef struct {
-    uint16_t id;
     OptionalVec2 tiles[TILES_IN_TETROMINO];
     TetrominoType type;
     Rotation rotation;

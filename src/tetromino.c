@@ -2,8 +2,6 @@
 #include "consts.h"
 #include <assert.h>
 
-uint16_t tetromino_ID_count = 0;
-
 extern uint8_t tetrominoes_count;
 extern uint16_t highest_tetrominoes[TILES_X];
 
@@ -17,7 +15,6 @@ bool Tetromino_can_move(
 );
 
 bool Tetromino_init(Tetromino* const t) {
-    t->id = tetromino_ID_count++;
     t->rotation = UP;
 
     t->type = (TetrominoType)rand() % TETROMINO_TYPE_SIZE;
@@ -123,23 +120,6 @@ bool Tetromino_init(Tetromino* const t) {
         if (tile->y - 1 == highest_tetrominoes[tile->x])
             return false;
     }
-
-#ifdef DEBUG
-    printf("Tetromino Created\n");
-    printf("ID: %u\n", t->id);
-    printf("Type: %u\n", t->type);
-    printf("Rotation: %u\n", t->rotation);
-    printf("Tiles:\n");
-    for (uint8_t i = 0; i < TILES_IN_TETROMINO; i++) {
-        printf(
-            "Tile %u: present=%u, x=%u, y=%u\n",
-            i,
-            t->tiles[i].present,
-            t->tiles[i].value.x,
-            t->tiles[i].value.y
-        );
-    }
-#endif
 
     return true;
 }
