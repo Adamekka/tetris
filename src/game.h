@@ -12,6 +12,7 @@ void Game_init(Game* const g);
 void Game_destroy(Game* const g);
 
 void Game_tetromino_push(Game* const g, const Tetromino t);
-void Game_tetromino_pop(const Game* const g, const uint16_t id);
+void Game_update_highest_tetrominoes(const Game* const g);
+void Game_check_lines(Game* const g);
 
 #endif

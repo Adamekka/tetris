@@ -1,5 +1,6 @@
 #include "game.h"
 #include "consts.h"
+#include <assert.h>
 
 #define INITIAL_ALLOCATED_TETROMINOES_COUNT 10
 
@@ -43,16 +44,18 @@ void Game_tetromino_push(Game* const g, const Tetromino t) {
     }
 
     g->tetrominoes[tetrominoes_count++] = (OptionalTetromino){true, t};
-
-    Game_update_highest_tetrominoes(g);
 }
 
-void Game_tetromino_pop(const Game* const g, const uint16_t id) {
-    for (uint16_t i = 0; i < tetrominoes_count; i++)
-        if (g->tetrominoes[i].value.id == id)
-            g->tetrominoes[i].present = false;
+void Game_tetromino_cleanup(const Game* const g) {
+    for (uint16_t i = 0; i < tetrominoes_count; i++) {
+        bool present = false;
 
-    Game_update_highest_tetrominoes(g);
+        for (uint8_t j = 0; j < TILES_IN_TETROMINO; j++)
+            present |= g->tetrominoes[i].value.tiles[j].present;
+
+        if (!present)
+            g->tetrominoes[i].present = false;
+    }
 }
 
 void Game_update_highest_tetrominoes(const Game* const g) {
@@ -63,11 +66,76 @@ void Game_update_highest_tetrominoes(const Game* const g) {
         if (!g->tetrominoes[i].present)
             continue;
 
+        const Tetromino* t = &g->tetrominoes[i].value;
+
         for (uint8_t j = 0; j < TILES_IN_TETROMINO; j++) {
-            const Vec2* tile = &g->tetrominoes[i].value.tiles[j].value;
+            if (!t->tiles[j].present)
+                continue;
+
+            const Vec2* tile = &t->tiles[j].value;
 
             if (tile->y > highest_tetrominoes[tile->x])
                 highest_tetrominoes[tile->x] = tile->y;
         }
     }
+}
+
+void Game_check_lines(Game* const g) {
+    bool any_found = false;
+
+    for (uint8_t y = 0; y < TILES_Y; y++) {
+        bool found = true;
+
+        for (uint8_t x = 0; x < TILES_X; x++) {
+            bool col_tile_found = false;
+
+            for (uint16_t i = 0; i < tetrominoes_count; i++) {
+                if (g->tetrominoes[i].present) {
+                    for (uint8_t j = 0; j < TILES_IN_TETROMINO; j++) {
+                        if (g->tetrominoes[i].value.tiles[j].present
+                            && g->tetrominoes[i].value.tiles[j].value.x == x
+                            && g->tetrominoes[i].value.tiles[j].value.y == y) {
+                            col_tile_found = true;
+                            break;
+                        }
+                    }
+                }
+                if (col_tile_found)
+                    goto next_x_tile;
+            }
+
+            if (!col_tile_found) {
+                found = false;
+                goto next_y_line;
+            }
+
+        next_x_tile:
+        }
+
+        assert(found);
+        any_found = true;
+
+        g->score++;
+
+        // Remove all tiles in the line
+        for (uint16_t i = 0; i < tetrominoes_count; i++)
+            if (g->tetrominoes[i].present)
+                for (uint8_t j = 0; j < TILES_IN_TETROMINO; j++)
+                    if (g->tetrominoes[i].value.tiles[j].present)
+                        if (g->tetrominoes[i].value.tiles[j].value.y == y)
+                            g->tetrominoes[i].value.tiles[j].present = false;
+
+        // Move all Tetrominoes above the line down
+        for (uint16_t i = 0; i < tetrominoes_count; i++)
+            if (g->tetrominoes[i].present)
+                for (uint8_t j = 0; j < TILES_IN_TETROMINO; j++)
+                    if (g->tetrominoes[i].value.tiles[j].present
+                        && g->tetrominoes[i].value.tiles[j].value.y > y)
+                        g->tetrominoes[i].value.tiles[j].value.y--;
+
+    next_y_line:
+    }
+
+    if (any_found)
+        Game_tetromino_cleanup(g);
 }

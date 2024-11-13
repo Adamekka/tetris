@@ -70,6 +70,8 @@ int main() {
 
             case STOPPED: {
                 Game_tetromino_push(&game, tetromino);
+                Game_check_lines(&game);
+                Game_update_highest_tetrominoes(&game);
                 state = NEW;
                 break;
             }
