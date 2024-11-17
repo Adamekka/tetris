@@ -8,11 +8,6 @@ typedef struct {
     OptionalTetromino* tetrominoes;
 } Game;
 
-void Game_init(Game* const g);
-void Game_destroy(Game* const g);
-
-void Game_tetromino_push(Game* const g, const Tetromino t);
-void Game_update_highest_tetrominoes(const Game* const g);
-void Game_check_lines(Game* const g);
+void Game_run(Game* const g, SDL_Renderer* const renderer);
 
 #endif
