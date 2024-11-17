@@ -31,3 +31,23 @@ void UI_draw_bg(SDL_Renderer* renderer) {
             SDL_RenderFillRect(renderer, &rect);
         }
 }
+
+void UI_draw_score(SDL_Renderer* renderer, Assets* assets, uint16_t score) {
+    char score_str[10];
+    snprintf(score_str, 10, "Score: %d", score);
+
+    SDL_Surface* surface = TTF_RenderText_Blended(
+        assets->font, score_str, (SDL_Color){255, 255, 255, 255}
+    );
+
+    SDL_Texture* texture = SDL_CreateTextureFromSurface(renderer, surface);
+
+    SDL_Rect rect = {
+      TILES_X * (TILE_SIZE + TILE_OFFSET) + 10, 10, surface->w, surface->h
+    };
+
+    SDL_RenderCopy(renderer, texture, NULL, &rect);
+
+    SDL_FreeSurface(surface);
+    SDL_DestroyTexture(texture);
+}

@@ -1,6 +1,7 @@
 #ifndef GAME_H
 #define GAME_H
 
+#include "assets.h"
 #include "tetromino.h"
 
 typedef struct {
@@ -8,6 +9,6 @@ typedef struct {
     OptionalTetromino* tetrominoes;
 } Game;
 
-void Game_run(Game* const g, SDL_Renderer* const renderer);
+void Game_run(Game* g, Assets* a, SDL_Renderer* const renderer);
 
 #endif

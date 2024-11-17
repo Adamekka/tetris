@@ -10,8 +10,11 @@ int main() {
         window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC
     );
 
+    Assets assets;
+    Assets_init(&assets);
+
     Game game;
-    Game_run(&game, renderer);
+    Game_run(&game, &assets, renderer);
 
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);

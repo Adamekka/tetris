@@ -29,7 +29,7 @@ void Game_destroy(Game* const g) {
     g->tetrominoes = NULL;
 }
 
-void Game_run(Game* g, SDL_Renderer* const renderer) {
+void Game_run(Game* g, Assets* a, SDL_Renderer* const renderer) {
     Game_init(g);
 
     TetrominoState state = NEW;
@@ -93,6 +93,7 @@ void Game_run(Game* g, SDL_Renderer* const renderer) {
         }
 
         UI_draw_bg(renderer);
+        UI_draw_score(renderer, a, g->score);
 
         Tetrominoes_draw(renderer, &tetromino, g->tetrominoes);
 

@@ -3,7 +3,7 @@
 
 #include "move_state.h"
 #include "vec2.h"
-#include <SDL2/SDL.h>
+#include <SDL2/SDL_render.h>
 
 typedef enum {
     I,
