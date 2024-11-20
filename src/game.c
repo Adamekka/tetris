@@ -22,6 +22,13 @@ void Game_init(Game* const g) {
     // Prealloc some memory, so we don't have to realloc first few times
     g->tetrominoes
         = malloc(sizeof(*g->tetrominoes) * INITIAL_ALLOCATED_TETROMINOES_COUNT);
+
+    // TODO: Move them to Game
+    tetrominoes_allocated = INITIAL_ALLOCATED_TETROMINOES_COUNT;
+    tetrominoes_count = 0;
+
+    for (uint8_t i = 0; i < TILES_X; i++)
+        highest_tetrominoes[i] = 0;
 }
 
 void Game_destroy(Game* const g) {
@@ -29,7 +36,7 @@ void Game_destroy(Game* const g) {
     g->tetrominoes = NULL;
 }
 
-void Game_run(Game* g, Assets* a, SDL_Renderer* const renderer) {
+void Game_run(Game* g, const Assets* const a, SDL_Renderer* const renderer) {
     Game_init(g);
 
     TetrominoState state = NEW;
@@ -42,7 +49,8 @@ void Game_run(Game* g, Assets* a, SDL_Renderer* const renderer) {
         while (SDL_PollEvent(&event)) {
             switch (event.type) {
                 case SDL_KEYDOWN: {
-                    if (event.type == SDL_QUIT)
+                    if (event.type == SDL_QUIT
+                        || event.key.keysym.sym == SDLK_q)
                         running = false;
                     else if (event.key.keysym.sym == SDLK_j)
                         Tetromino_rotate_left(&tetromino, g->tetrominoes);

@@ -9,6 +9,9 @@ typedef struct {
     OptionalTetromino* tetrominoes;
 } Game;
 
-void Game_run(Game* g, Assets* a, SDL_Renderer* const renderer);
+void Game_init(Game* const g);
+void Game_destroy(Game* const g);
+
+void Game_run(Game* g, const Assets* const a, SDL_Renderer* const renderer);
 
 #endif

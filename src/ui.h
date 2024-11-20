@@ -3,7 +3,11 @@
 
 #include "assets.h"
 
-void UI_draw_bg(SDL_Renderer* renderer);
-void UI_draw_score(SDL_Renderer* renderer, Assets* assets, uint16_t score);
+void UI_draw_bg(SDL_Renderer* const renderer);
+void UI_draw_score(
+    SDL_Renderer* const renderer,
+    const Assets* const assets,
+    const uint16_t score
+);
 
 #endif

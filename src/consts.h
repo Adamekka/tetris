@@ -3,6 +3,9 @@
 
 //! This file contains all the global constants
 
+#define WINDOW_WIDTH 800
+#define WINDOW_HEIGHT 600
+
 #define TILES_X 10
 #define TILES_Y 16
 
