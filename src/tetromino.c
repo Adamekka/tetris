@@ -1,5 +1,6 @@
 #include "tetromino.h"
 #include "consts.h"
+#include "rect.h"
 #include <assert.h>
 
 extern uint8_t tetrominoes_count;
@@ -1220,7 +1221,7 @@ void Tetromino_draw(SDL_Renderer* const renderer, const Tetromino* t) {
 
     for (uint8_t i = 0; i < TILES_IN_TETROMINO; i++) {
         if (t->tiles[i].present) {
-            const SDL_Rect rect = {
+            const Rect rect = {
               t->tiles[i].value.x * (TILE_SIZE + TILE_OFFSET) + LEFT_PADDING,
               (TILES_Y - t->tiles[i].value.y) * (TILE_SIZE + TILE_OFFSET)
                   + TOP_PADDING,

@@ -1,5 +1,6 @@
 #include "consts.h"
 #include "main_menu.h"
+#include "settings.h"
 
 int main() {
     SDL_Init(SDL_INIT_VIDEO);
@@ -15,8 +16,12 @@ int main() {
     Assets assets;
     Assets_init(&assets);
 
+    Settings settings;
+    Settings_init(&settings);
+
     MainMenu_run(renderer, &assets);
 
+    Assets_destroy(&assets);
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
     SDL_Quit();

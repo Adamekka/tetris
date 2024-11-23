@@ -6,6 +6,9 @@
 #define WINDOW_WIDTH 800
 #define WINDOW_HEIGHT 600
 
+#define BUTTON_WIDTH 200
+#define BUTTON_HEIGHT 50
+
 #define TILES_X 10
 #define TILES_Y 16
 

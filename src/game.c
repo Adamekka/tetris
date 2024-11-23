@@ -101,7 +101,7 @@ void Game_run(Game* g, const Assets* const a, SDL_Renderer* const renderer) {
         }
 
         UI_draw_bg(renderer);
-        UI_draw_score(renderer, a, g->score);
+        UI_draw_text(renderer, a, g->score);
 
         Tetrominoes_draw(renderer, &tetromino, g->tetrominoes);
 

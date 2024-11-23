@@ -8,5 +8,6 @@ typedef struct {
 } Assets;
 
 void Assets_init(Assets* const a);
+void Assets_destroy(const Assets* const a);
 
 #endif
