@@ -2,8 +2,7 @@
 #define TETROMINO_H
 
 #include "move_state.h"
-#include "vec2.h"
-#include <SDL2/SDL_render.h>
+#include "settings.h"
 
 typedef enum {
     I,
@@ -38,21 +37,48 @@ typedef struct {
 typedef optional(Tetromino) OptionalTetromino;
 
 /// Returns false if game over
-bool Tetromino_init(Tetromino* const t);
+bool Tetromino_init(
+    Tetromino* const t,
+    const uint16_t highest_tetrominoes[],
+    const uint16_t tetrominoes_count,
+    const Settings* const s
+);
 
 void Tetromino_rotate_right(
-    Tetromino* const t, const OptionalTetromino other[]
+    Tetromino* const t,
+    const OptionalTetromino other[],
+    const uint16_t tetrominoes_count,
+    const Settings* const s
 );
-void Tetromino_rotate_left(Tetromino* const t, const OptionalTetromino other[]);
+void Tetromino_rotate_left(
+    Tetromino* const t,
+    const OptionalTetromino other[],
+    const uint16_t tetrominoes_count,
+    const Settings* const s
+);
 
-void Tetromino_move_right(Tetromino* const t, const OptionalTetromino other[]);
-void Tetromino_move_left(Tetromino* const t, const OptionalTetromino other[]);
-MoveState Tetromino_move_down(Tetromino* const t);
+void Tetromino_move_right(
+    Tetromino* const t,
+    const OptionalTetromino other[],
+    const uint16_t tetrominoes_count,
+    const Settings* const s
+);
+void Tetromino_move_left(
+    Tetromino* const t,
+    const OptionalTetromino other[],
+    const uint16_t tetrominoes_count,
+    const Settings* const s
+);
+MoveState Tetromino_move_down(
+    Tetromino* const t, uint16_t highest_tetrominoes[], const Settings* const s
+);
 
 void Tetrominoes_draw(
     SDL_Renderer* const renderer,
     const Tetromino* const t,
-    const OptionalTetromino other[]
+    const OptionalTetromino other[],
+    const uint16_t tetrominoes_count,
+    const Settings* const s
 );
 
 #endif

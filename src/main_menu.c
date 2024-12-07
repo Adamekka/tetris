@@ -1,17 +1,14 @@
 #include "button.h"
 #include "consts.h"
 #include "game.h"
-#include <assert.h>
 
 typedef enum {
-    PLAY_SELECTED = 0,
-    SETTINGS_SELECTED = 1,
-    QUIT_SELECTED = 2,
-    PLAY,
-    SETTINGS,
+    PLAY = 0,
+    SETTINGS = 1,
+    QUIT = 2,
 } MainMenuOption;
 
-#define MAIN_MENU_OPTIONS (QUIT_SELECTED + 1)
+#define MAIN_MENU_OPTIONS (QUIT + 1)
 
 void MainMenu_next_option(MainMenuOption* const selected);
 void MainMenu_previous_option(MainMenuOption* const selected);
@@ -22,9 +19,13 @@ void MainMenu_draw(
     const MainMenuOption selected
 );
 
-void MainMenu_run(SDL_Renderer* const renderer, const Assets* const assets) {
+void MainMenu_run(
+    SDL_Renderer* const renderer,
+    const Assets* const assets,
+    Settings* const settings
+) {
     SDL_Event event;
-    MainMenuOption selected = PLAY_SELECTED;
+    MainMenuOption selected = PLAY;
     bool running = true;
 
 main_menu_start:
@@ -42,26 +43,11 @@ main_menu_start:
                              || event.key.keysym.sym == SDLK_DOWN)
                         MainMenu_next_option(&selected);
                     else if (event.key.keysym.sym == SDLK_RETURN) {
-                        switch (selected) {
-                            case PLAY_SELECTED: {
-                                selected = PLAY;
-                                running = false;
-                                break;
-                            }
+                        if (selected == QUIT)
+                            return;
 
-                            case SETTINGS_SELECTED: {
-                                selected = SETTINGS;
-                                running = false;
-                                break;
-                            }
-
-                            case QUIT_SELECTED: {
-                                return;
-                                break;
-                            }
-
-                            default: assert(false); break;
-                        }
+                        running = false;
+                        break;
                     }
                 }
             }
@@ -74,22 +60,23 @@ main_menu_start:
     switch (selected) {
         case PLAY: {
             Game game;
-            Game_run(&game, assets, renderer);
-            selected = PLAY_SELECTED;
+            Game_run(&game, assets, settings, renderer);
             running = true;
             goto main_menu_start;
             break;
         }
 
         case SETTINGS: {
-            // TODO
-            selected = SETTINGS_SELECTED;
+            Settings_run(settings, renderer, assets);
             running = true;
             goto main_menu_start;
             break;
         }
 
-        default: assert(false); break;
+        case QUIT: {
+            return;
+            break;
+        }
     }
 }
 
@@ -101,21 +88,6 @@ void MainMenu_previous_option(MainMenuOption* const selected) {
     *selected = (*selected + MAIN_MENU_OPTIONS - 1) % MAIN_MENU_OPTIONS;
 }
 
-// 0x000069
-#define MAIN_MENU_BG_COLOR_R 0
-#define MAIN_MENU_BG_COLOR_G 0
-#define MAIN_MENU_BG_COLOR_B 0x69
-
-// 0x0000AA
-#define MAIN_MENU_BUTTON_COLOR_R 0
-#define MAIN_MENU_BUTTON_COLOR_G 0
-#define MAIN_MENU_BUTTON_COLOR_B 0xAA
-
-// 0x0000FF
-#define MAIN_MENU_BUTTON_SELECTED_COLOR_R 0
-#define MAIN_MENU_BUTTON_SELECTED_COLOR_G 0
-#define MAIN_MENU_BUTTON_SELECTED_COLOR_B 0xFF
-
 #define MAIN_MENU_TOP_PADDING                                                  \
     (WINDOW_HEIGHT / 2 - BUTTON_HEIGHT * (MAIN_MENU_OPTIONS - 1))
 
@@ -125,9 +97,7 @@ void MainMenu_draw(
     const MainMenuOption selected
 ) {
     // Background
-    const Color main_menu_bg = Color_init(
-        MAIN_MENU_BG_COLOR_R, MAIN_MENU_BG_COLOR_G, MAIN_MENU_BG_COLOR_B
-    );
+    const Color main_menu_bg = Color_init(BG_COLOR_R, BG_COLOR_G, BG_COLOR_B);
 
     SDL_SetRenderDrawColor(renderer, main_menu_bg);
     SDL_RenderClear(renderer);
@@ -183,31 +153,25 @@ void MainMenu_draw(
       BUTTON_HEIGHT
     };
 
-    const Color bg = Color_init(
-        MAIN_MENU_BUTTON_COLOR_R,
-        MAIN_MENU_BUTTON_COLOR_G,
-        MAIN_MENU_BUTTON_COLOR_B
-    );
+    const Color bg = Color_init(BUTTON_COLOR_R, BUTTON_COLOR_G, BUTTON_COLOR_B);
 
     const Color selected_bg = Color_init(
-        MAIN_MENU_BUTTON_SELECTED_COLOR_R,
-        MAIN_MENU_BUTTON_SELECTED_COLOR_G,
-        MAIN_MENU_BUTTON_SELECTED_COLOR_B
+        BUTTON_SELECTED_COLOR_R,
+        BUTTON_SELECTED_COLOR_G,
+        BUTTON_SELECTED_COLOR_B
     );
 
     Button play_button;
     Button_init(&play_button, "Play", play_rect, bg, selected_bg, text_color);
-    Button_draw(&play_button, renderer, assets, selected == PLAY_SELECTED);
+    Button_draw(&play_button, renderer, assets, selected == PLAY);
 
     Button settings_button;
     Button_init(
         &settings_button, "Settings", settings_rect, bg, selected_bg, text_color
     );
-    Button_draw(
-        &settings_button, renderer, assets, selected == SETTINGS_SELECTED
-    );
+    Button_draw(&settings_button, renderer, assets, selected == SETTINGS);
 
     Button quit_button;
     Button_init(&quit_button, "Quit", quit_rect, bg, selected_bg, text_color);
-    Button_draw(&quit_button, renderer, assets, selected == QUIT_SELECTED);
+    Button_draw(&quit_button, renderer, assets, selected == QUIT);
 }

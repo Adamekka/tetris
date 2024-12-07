@@ -1,34 +1,31 @@
 #include "game.h"
-#include "consts.h"
 #include "tetromino_state.h"
 #include "ui.h"
 #include <assert.h>
 
 #define INITIAL_ALLOCATED_TETROMINOES_COUNT 10
 
-uint16_t tetrominoes_allocated = INITIAL_ALLOCATED_TETROMINOES_COUNT;
-uint16_t tetrominoes_count = 0;
-
-// Cache the highest Tetromino in each column
-uint16_t highest_tetrominoes[TILES_X] = {0};
-
 void Game_tetromino_push(Game* const g, const Tetromino t);
-void Game_update_highest_tetrominoes(const Game* const g);
-void Game_check_lines(Game* const g);
+void Game_update_highest_tetrominoes(
+    const Game* const g, const Settings* const s
+);
+void Game_check_lines(Game* const g, const Settings* const s);
 
-void Game_init(Game* const g) {
+void Game_init(Game* const g, const Settings* const s) {
     g->score = 0;
 
     // Prealloc some memory, so we don't have to realloc first few times
     g->tetrominoes
         = malloc(sizeof(*g->tetrominoes) * INITIAL_ALLOCATED_TETROMINOES_COUNT);
 
-    // TODO: Move them to Game
-    tetrominoes_allocated = INITIAL_ALLOCATED_TETROMINOES_COUNT;
-    tetrominoes_count = 0;
+    g->tetrominoes_allocated = INITIAL_ALLOCATED_TETROMINOES_COUNT;
+    g->tetrominoes_count = 0;
 
-    for (uint8_t i = 0; i < TILES_X; i++)
-        highest_tetrominoes[i] = 0;
+    g->highest_tetrominoes
+        = malloc(sizeof(*g->highest_tetrominoes) * s->tiles.x);
+
+    for (uint16_t i = 0; i < s->tiles.x; i++)
+        g->highest_tetrominoes[i] = 0;
 }
 
 void Game_destroy(Game* const g) {
@@ -36,8 +33,13 @@ void Game_destroy(Game* const g) {
     g->tetrominoes = NULL;
 }
 
-void Game_run(Game* g, const Assets* const a, SDL_Renderer* const renderer) {
-    Game_init(g);
+void Game_run(
+    Game* g,
+    const Assets* const a,
+    const Settings* s,
+    SDL_Renderer* const renderer
+) {
+    Game_init(g, s);
 
     TetrominoState state = NEW;
     Tetromino tetromino;
@@ -53,17 +55,27 @@ void Game_run(Game* g, const Assets* const a, SDL_Renderer* const renderer) {
                         || event.key.keysym.sym == SDLK_q)
                         running = false;
                     else if (event.key.keysym.sym == SDLK_j)
-                        Tetromino_rotate_left(&tetromino, g->tetrominoes);
+                        Tetromino_rotate_left(
+                            &tetromino, g->tetrominoes, g->tetrominoes_count, s
+                        );
                     else if (event.key.keysym.sym == SDLK_l)
-                        Tetromino_rotate_right(&tetromino, g->tetrominoes);
+                        Tetromino_rotate_right(
+                            &tetromino, g->tetrominoes, g->tetrominoes_count, s
+                        );
                     else if (event.key.keysym.sym == SDLK_a)
-                        Tetromino_move_left(&tetromino, g->tetrominoes);
+                        Tetromino_move_left(
+                            &tetromino, g->tetrominoes, g->tetrominoes_count, s
+                        );
                     else if (event.key.keysym.sym == SDLK_d)
-                        Tetromino_move_right(&tetromino, g->tetrominoes);
+                        Tetromino_move_right(
+                            &tetromino, g->tetrominoes, g->tetrominoes_count, s
+                        );
                     else if (event.key.keysym.sym == SDLK_s) {
-                        MoveState s = MOVE;
-                        while (s == MOVE)
-                            s = Tetromino_move_down(&tetromino);
+                        MoveState move_state = MOVE;
+                        while (move_state == MOVE)
+                            move_state = Tetromino_move_down(
+                                &tetromino, g->highest_tetrominoes, s
+                            );
                     }
                 }
             }
@@ -71,7 +83,9 @@ void Game_run(Game* g, const Assets* const a, SDL_Renderer* const renderer) {
 
         switch (state) {
             case NEW: {
-                bool ok = Tetromino_init(&tetromino);
+                bool ok = Tetromino_init(
+                    &tetromino, g->highest_tetrominoes, g->tetrominoes_count, s
+                );
 
                 if (!ok)
                     running = false;
@@ -81,7 +95,9 @@ void Game_run(Game* g, const Assets* const a, SDL_Renderer* const renderer) {
             }
 
             case MOVING: {
-                MoveState moved = Tetromino_move_down(&tetromino);
+                MoveState moved = Tetromino_move_down(
+                    &tetromino, g->highest_tetrominoes, s
+                );
 
                 if (moved == STOP)
                     state = STOPPED;
@@ -93,21 +109,23 @@ void Game_run(Game* g, const Assets* const a, SDL_Renderer* const renderer) {
 
             case STOPPED: {
                 Game_tetromino_push(g, tetromino);
-                Game_check_lines(g);
-                Game_update_highest_tetrominoes(g);
+                Game_check_lines(g, s);
+                Game_update_highest_tetrominoes(g, s);
                 state = NEW;
                 break;
             }
         }
 
-        UI_draw_bg(renderer);
-        UI_draw_text(renderer, a, g->score);
+        UI_draw_bg(renderer, s);
+        UI_draw_text(renderer, a, s, g->score);
 
-        Tetrominoes_draw(renderer, &tetromino, g->tetrominoes);
+        Tetrominoes_draw(
+            renderer, &tetromino, g->tetrominoes, g->tetrominoes_count, s
+        );
 
         SDL_RenderPresent(renderer);
 
-        SDL_Delay(1000 / 6);
+        SDL_Delay(1000 / s->speed);
     }
 
     // TODO: Game over screen
@@ -118,27 +136,28 @@ void Game_run(Game* g, const Assets* const a, SDL_Renderer* const renderer) {
 
 void Game_tetromino_push(Game* const g, const Tetromino t) {
     // Replace destroyed Tetromino with new one if possible
-    for (uint16_t i = 0; i < tetrominoes_count; i++)
+    for (uint16_t i = 0; i < g->tetrominoes_count; i++)
         if (!g->tetrominoes[i].present) {
             g->tetrominoes[i] = (OptionalTetromino){true, t};
             return;
         }
 
     // If not, push or allocate more memory
-    if (tetrominoes_count >= tetrominoes_allocated) {
+    if (g->tetrominoes_count >= g->tetrominoes_allocated) {
         // The C++ way of calculating the new size for std::vector
-        tetrominoes_allocated = (uint16_t)round(tetrominoes_allocated * 1.5);
+        g->tetrominoes_allocated
+            = (uint16_t)round(g->tetrominoes_allocated * 1.5);
 
         g->tetrominoes = realloc(
-            g->tetrominoes, sizeof(*g->tetrominoes) * tetrominoes_allocated
+            g->tetrominoes, sizeof(*g->tetrominoes) * g->tetrominoes_allocated
         );
     }
 
-    g->tetrominoes[tetrominoes_count++] = (OptionalTetromino){true, t};
+    g->tetrominoes[g->tetrominoes_count++] = (OptionalTetromino){true, t};
 }
 
 void Game_tetromino_cleanup(const Game* const g) {
-    for (uint16_t i = 0; i < tetrominoes_count; i++) {
+    for (uint16_t i = 0; i < g->tetrominoes_count; i++) {
         bool present = false;
 
         for (uint8_t j = 0; j < TILES_IN_TETROMINO; j++)
@@ -149,11 +168,13 @@ void Game_tetromino_cleanup(const Game* const g) {
     }
 }
 
-void Game_update_highest_tetrominoes(const Game* const g) {
-    for (uint16_t i = 0; i < TILES_X; i++)
-        highest_tetrominoes[i] = 0;
+void Game_update_highest_tetrominoes(
+    const Game* const g, const Settings* const s
+) {
+    for (uint16_t i = 0; i < s->tiles.x; i++)
+        g->highest_tetrominoes[i] = 0;
 
-    for (uint16_t i = 0; i < tetrominoes_count; i++) {
+    for (uint16_t i = 0; i < g->tetrominoes_count; i++) {
         if (!g->tetrominoes[i].present)
             continue;
 
@@ -165,22 +186,22 @@ void Game_update_highest_tetrominoes(const Game* const g) {
 
             const Vec2* tile = &t->tiles[j].value;
 
-            if (tile->y > highest_tetrominoes[tile->x])
-                highest_tetrominoes[tile->x] = tile->y;
+            if (tile->y > g->highest_tetrominoes[tile->x])
+                g->highest_tetrominoes[tile->x] = tile->y;
         }
     }
 }
 
-void Game_check_lines(Game* const g) {
+void Game_check_lines(Game* const g, const Settings* const s) {
     bool any_found = false;
 
-    for (uint8_t y = 0; y < TILES_Y; y++) {
+    for (uint8_t y = 0; y < s->tiles.y; y++) {
         bool found = true;
 
-        for (uint8_t x = 0; x < TILES_X; x++) {
+        for (uint8_t x = 0; x < s->tiles.x; x++) {
             bool col_tile_found = false;
 
-            for (uint16_t i = 0; i < tetrominoes_count; i++) {
+            for (uint16_t i = 0; i < g->tetrominoes_count; i++) {
                 if (g->tetrominoes[i].present) {
                     for (uint8_t j = 0; j < TILES_IN_TETROMINO; j++) {
                         if (g->tetrominoes[i].value.tiles[j].present
@@ -209,7 +230,8 @@ void Game_check_lines(Game* const g) {
         g->score++;
 
         // Remove all tiles in the line
-        for (uint16_t i = 0; i < tetrominoes_count; i++)
+        // TODO: Remove more than 1 line
+        for (uint16_t i = 0; i < g->tetrominoes_count; i++)
             if (g->tetrominoes[i].present)
                 for (uint8_t j = 0; j < TILES_IN_TETROMINO; j++)
                     if (g->tetrominoes[i].value.tiles[j].present)
@@ -217,7 +239,7 @@ void Game_check_lines(Game* const g) {
                             g->tetrominoes[i].value.tiles[j].present = false;
 
         // Move all Tetrominoes above the line down
-        for (uint16_t i = 0; i < tetrominoes_count; i++)
+        for (uint16_t i = 0; i < g->tetrominoes_count; i++)
             if (g->tetrominoes[i].present)
                 for (uint8_t j = 0; j < TILES_IN_TETROMINO; j++)
                     if (g->tetrominoes[i].value.tiles[j].present

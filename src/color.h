@@ -6,6 +6,20 @@
 #define SDL_SetRenderDrawColor(renderer, color)                                \
     SDL_SetRenderDrawColor((renderer), (color.r), (color.g), (color.b), 255)
 
+// 0x000069
+#define BG_COLOR_R 0
+#define BG_COLOR_G 0
+#define BG_COLOR_B 0x69
+
+// 0x0000AA
+#define BUTTON_COLOR_R 0
+#define BUTTON_COLOR_G 0
+#define BUTTON_COLOR_B 0xAA
+
+// 0x0000FF
+#define BUTTON_SELECTED_COLOR_R 0
+#define BUTTON_SELECTED_COLOR_G 0
+#define BUTTON_SELECTED_COLOR_B 0xFF
 typedef struct {
     uint8_t r, g, b;
 } Color;

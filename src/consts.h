@@ -9,13 +9,10 @@
 #define BUTTON_WIDTH 200
 #define BUTTON_HEIGHT 50
 
-#define TILES_X 10
-#define TILES_Y 16
-
 #define TOP_PADDING 4
 #define LEFT_PADDING 4
 
-#define TILE_SIZE 32
-#define TILE_OFFSET 4
+#define UINT8_MAX_DIGITS 3
+#define UINT16_MAX_DIGITS 5
 
 #endif

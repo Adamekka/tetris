@@ -12,7 +12,7 @@
 #define BG_COLOR_G 0x00
 #define BG_COLOR_B 0x00
 
-void UI_draw_bg(SDL_Renderer* const renderer) {
+void UI_draw_bg(SDL_Renderer* const renderer, const Settings* const s) {
     SDL_SetRenderDrawColor(renderer, BG_COLOR_R, BG_COLOR_G, BG_COLOR_B, 255);
     SDL_RenderClear(renderer);
 
@@ -20,31 +20,31 @@ void UI_draw_bg(SDL_Renderer* const renderer) {
         renderer, TILE_COLOR_R, TILE_COLOR_G, TILE_COLOR_B, 255
     );
 
-    for (int x = 0; x < TILES_X; x++)
-        for (int y = 0; y < TILES_Y; y++) {
+    for (int x = 0; x < s->tiles.x; x++)
+        for (int y = 0; y < s->tiles.y; y++) {
             const Rect rect = {
-              x * (TILE_SIZE + TILE_OFFSET) + LEFT_PADDING,
-              y * (TILE_SIZE + TILE_OFFSET) + TOP_PADDING,
-              TILE_SIZE,
-              TILE_SIZE
+              x * (s->tile_size + s->tile_offset) + LEFT_PADDING,
+              y * (s->tile_size + s->tile_offset) + TOP_PADDING,
+              s->tile_size,
+              s->tile_size
             };
 
             SDL_RenderFillRect(renderer, &rect);
         }
 }
 
-#define UINT16_MAX_DIGITS 5
 #define SCORE_STR_LEN (sizeof("Score: ") + UINT16_MAX_DIGITS)
 
 void UI_draw_text(
     SDL_Renderer* const renderer,
     const Assets* const assets,
+    const Settings* const s,
     const uint16_t score_int
 ) {
     char score_str[SCORE_STR_LEN];
     snprintf(score_str, SCORE_STR_LEN, "Score: %u", score_int);
 
-    const int L_PAD = TILES_X * (TILE_SIZE + TILE_OFFSET);
+    const int L_PAD = s->tiles.x * (s->tile_size + s->tile_offset);
 
     const Rect score_rect = {
       L_PAD + 60,
