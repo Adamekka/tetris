@@ -195,7 +195,7 @@ void Game_update_highest_tetrominoes(
 void Game_check_lines(Game* const g, const Settings* const s) {
     bool any_found = false;
 
-    for (uint8_t y = 0; y < s->tiles.y; y++) {
+    for (int16_t y = s->tiles.y - 1; y >= 0; y--) {
         bool found = true;
 
         for (uint8_t x = 0; x < s->tiles.x; x++) {
@@ -230,7 +230,6 @@ void Game_check_lines(Game* const g, const Settings* const s) {
         g->score++;
 
         // Remove all tiles in the line
-        // TODO: Remove more than 1 line
         for (uint16_t i = 0; i < g->tetrominoes_count; i++)
             if (g->tetrominoes[i].present)
                 for (uint8_t j = 0; j < TILES_IN_TETROMINO; j++)
