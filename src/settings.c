@@ -295,4 +295,18 @@ void Settings_draw(
     Button back_button;
     Button_init(&back_button, "Back", back_rect, bg, selected_bg, text_color);
     Button_draw(&back_button, renderer, assets, selected == BACK);
+
+    Rect text_rect = {150, WINDOW_HEIGHT / 4, 0, 0};
+
+    Text hint;
+    Text_init(
+        &hint,
+        "WASD or arrows to navigate, changing values is experimental, they can "
+        "crash game or make undefined behaviour, I've intentionally left big "
+        "ranges, I've warned you",
+        text_rect,
+        Color_to_SDL_Color(text_color),
+        (optional_uint16){1, 250}
+    );
+    Text_draw(&hint, renderer, assets);
 }
