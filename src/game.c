@@ -70,13 +70,11 @@ void Game_run(
                         Tetromino_move_right(
                             &tetromino, g->tetrominoes, g->tetrominoes_count, s
                         );
-                    else if (event.key.keysym.sym == SDLK_s) {
-                        MoveState move_state = MOVE;
-                        while (move_state == MOVE)
-                            move_state = Tetromino_move_down(
+                    else if (event.key.keysym.sym == SDLK_s)
+                        for (uint8_t i = 0; i < 2; i++)
+                            Tetromino_move_down(
                                 &tetromino, g->highest_tetrominoes, s
                             );
-                    }
                 }
             }
         }
