@@ -51,7 +51,6 @@ void Settings_run(
     SettingsOption selected = 0;
     bool running = true;
 
-    // settings_start:
     while (running) {
         while (SDL_PollEvent(&event)) {
             switch (event.type) {
