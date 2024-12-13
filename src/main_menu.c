@@ -35,7 +35,7 @@ main_menu_start:
                 case SDL_KEYDOWN: {
                     if (event.type == SDL_QUIT
                         || event.key.keysym.sym == SDLK_q)
-                        running = false;
+                        return;
                     else if (event.key.keysym.sym == SDLK_w
                              || event.key.keysym.sym == SDLK_UP)
                         MainMenu_previous_option(&selected);
