@@ -39,6 +39,7 @@ void Game_run(
     const Settings* s,
     SDL_Renderer* const renderer
 ) {
+game_start:
     Game_init(g, s);
 
     TetrominoState state = NEW;
@@ -85,8 +86,11 @@ void Game_run(
                     &tetromino, g->highest_tetrominoes, g->tetrominoes_count, s
                 );
 
-                if (!ok)
-                    running = false;
+                if (!ok) {
+                    UI_draw_game_over(renderer, a);
+                    Game_destroy(g);
+                    goto game_start;
+                }
 
                 state = MOVING;
                 break;
@@ -128,8 +132,6 @@ void Game_run(
 
         SDL_Delay(1000 / s->speed);
     }
-
-    // TODO: Game over screen
 
     Game_destroy(g);
     g = NULL;

@@ -1,6 +1,7 @@
 #include "ui.h"
 #include "consts.h"
 #include "text.h"
+#include <assert.h>
 
 // 0x333333
 #define TILE_COLOR_R 0x33
@@ -37,7 +38,7 @@ void UI_draw_bg(SDL_Renderer* const renderer, const Settings* const s) {
 
 void UI_draw_text(
     SDL_Renderer* const renderer,
-    const Assets* const assets,
+    const Assets* const a,
     const Settings* const s,
     const uint16_t score_int
 ) {
@@ -63,7 +64,7 @@ void UI_draw_text(
         (SDL_Color){255, 255, 255, 255},
         (optional_uint16){0}
     );
-    Text_draw(&score, renderer, assets);
+    Text_draw(&score, renderer, a);
 
     Text hint;
     Text_init(
@@ -73,5 +74,72 @@ void UI_draw_text(
         (SDL_Color){255, 255, 255, 255},
         (optional_uint16){1, WINDOW_WIDTH / 2}
     );
-    Text_draw(&hint, renderer, assets);
+    Text_draw(&hint, renderer, a);
+}
+
+#define GAME_OVER_MESSAGE "Game Over, new game will start in 3 seconds"
+#define LOOPS 3
+
+void UI_draw_game_over(SDL_Renderer* const renderer, const Assets* const a) {
+    for (uint8_t i = 1; i <= LOOPS; i++) {
+        SDL_SetRenderDrawColor(
+            renderer, BG_COLOR_R, BG_COLOR_G, BG_COLOR_B, 255
+        );
+        SDL_RenderClear(renderer);
+
+        const Rect game_over_rect = {WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2, 0, 0};
+
+        char game_over_text[sizeof(GAME_OVER_MESSAGE) + LOOPS];
+
+        switch (i) {
+            case 1: {
+                snprintf(
+                    game_over_text,
+                    sizeof(game_over_text),
+                    "%s.",
+                    GAME_OVER_MESSAGE
+                );
+                break;
+            }
+
+            case 2: {
+                snprintf(
+                    game_over_text,
+                    sizeof(game_over_text),
+                    "%s..",
+                    GAME_OVER_MESSAGE
+                );
+                break;
+            }
+
+            case 3: {
+                snprintf(
+                    game_over_text,
+                    sizeof(game_over_text),
+                    "%s...",
+                    GAME_OVER_MESSAGE
+                );
+                break;
+            }
+
+            default: {
+                assert(false);
+                return;
+            }
+        }
+
+        Text game_over;
+        Text_init(
+            &game_over,
+            game_over_text,
+            game_over_rect,
+            (SDL_Color){255, 255, 255, 255},
+            (optional_uint16){0}
+        );
+        Text_draw(&game_over, renderer, a);
+
+        SDL_RenderPresent(renderer);
+
+        SDL_Delay(1000);
+    }
 }
