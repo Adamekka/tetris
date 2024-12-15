@@ -305,7 +305,7 @@ void Settings_draw(
         "ranges, I've warned you",
         text_rect,
         Color_to_SDL_Color(text_color),
-        (optional_uint16){1, 250}
+        (Option_uint16){1, 250}
     );
     Text_draw(&hint, renderer, assets);
 }

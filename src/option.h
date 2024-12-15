@@ -1,7 +1,7 @@
-#ifndef OPTIONAL_H
-#define OPTIONAL_H
+#ifndef OPTION_H
+#define OPTION_H
 
-#define optional(T)                                                            \
+#define Option(T)                                                              \
     struct {                                                                   \
         bool present;                                                          \
         T value;                                                               \

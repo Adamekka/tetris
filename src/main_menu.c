@@ -117,7 +117,7 @@ void MainMenu_draw(
         "Tetris",
         tetris_rect,
         (SDL_Color){255, 255, 255, 255},
-        (optional_uint16){0}
+        (Option_uint16){0}
     );
     Text_draw(&tetris_text, renderer, assets);
 
@@ -127,7 +127,7 @@ void MainMenu_draw(
         "W/S or UP/DOWN to navigate, ENTER to select, Q to quit.",
         hint_rect,
         (SDL_Color){255, 255, 255, 255},
-        (optional_uint16){0}
+        (Option_uint16){0}
     );
     Text_draw(&hint_text, renderer, assets);
 

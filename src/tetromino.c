@@ -6,14 +6,14 @@
 void Tetromino_rotate(
     Tetromino* const t,
     const Rotation rotation,
-    const OptionalTetromino other[],
+    const Option_Tetromino other[],
     const uint16_t tetrominoes_count,
     const Settings* const s
 );
 
 bool Tetromino_can_move(
-    const OptionalVec2 new_pos[TILES_IN_TETROMINO],
-    const OptionalTetromino other[],
+    const Option_Vec2 new_pos[TILES_IN_TETROMINO],
+    const Option_Tetromino other[],
     const uint16_t tetrominoes_count,
     const Settings* const s
 );
@@ -32,58 +32,58 @@ bool Tetromino_init(
     // Tetrominoes are first created in their UP position, then rotated
     switch (t->type) {
         case I: {
-            t->tiles[0] = (OptionalVec2){true, {0, 3}}; // ....
-            t->tiles[1] = (OptionalVec2){true, {1, 3}}; // 0123
-            t->tiles[2] = (OptionalVec2){true, {2, 3}}; // ....
-            t->tiles[3] = (OptionalVec2){true, {3, 3}}; // ....
+            t->tiles[0] = (Option_Vec2){true, {0, 3}}; // ....
+            t->tiles[1] = (Option_Vec2){true, {1, 3}}; // 0123
+            t->tiles[2] = (Option_Vec2){true, {2, 3}}; // ....
+            t->tiles[3] = (Option_Vec2){true, {3, 3}}; // ....
             break;
         }
 
         case J: {
-            t->tiles[0] = (OptionalVec2){true, {0, 2}}; // 0..
-            t->tiles[1] = (OptionalVec2){true, {0, 1}}; // 123
-            t->tiles[2] = (OptionalVec2){true, {1, 1}}; // ...
-            t->tiles[3] = (OptionalVec2){true, {2, 1}};
+            t->tiles[0] = (Option_Vec2){true, {0, 2}}; // 0..
+            t->tiles[1] = (Option_Vec2){true, {0, 1}}; // 123
+            t->tiles[2] = (Option_Vec2){true, {1, 1}}; // ...
+            t->tiles[3] = (Option_Vec2){true, {2, 1}};
             break;
         }
 
         case L: {
-            t->tiles[0] = (OptionalVec2){true, {2, 2}}; // ..0
-            t->tiles[1] = (OptionalVec2){true, {2, 1}}; // 321
-            t->tiles[2] = (OptionalVec2){true, {1, 1}}; // ...
-            t->tiles[3] = (OptionalVec2){true, {0, 1}};
+            t->tiles[0] = (Option_Vec2){true, {2, 2}}; // ..0
+            t->tiles[1] = (Option_Vec2){true, {2, 1}}; // 321
+            t->tiles[2] = (Option_Vec2){true, {1, 1}}; // ...
+            t->tiles[3] = (Option_Vec2){true, {0, 1}};
             break;
         }
 
         case O: {
-            t->tiles[0] = (OptionalVec2){true, {0, 1}}; // 01
-            t->tiles[1] = (OptionalVec2){true, {1, 1}}; // 23
-            t->tiles[2] = (OptionalVec2){true, {0, 0}};
-            t->tiles[3] = (OptionalVec2){true, {1, 0}};
+            t->tiles[0] = (Option_Vec2){true, {0, 1}}; // 01
+            t->tiles[1] = (Option_Vec2){true, {1, 1}}; // 23
+            t->tiles[2] = (Option_Vec2){true, {0, 0}};
+            t->tiles[3] = (Option_Vec2){true, {1, 0}};
             break;
         }
 
         case S: {
-            t->tiles[0] = (OptionalVec2){true, {2, 2}}; // .10
-            t->tiles[1] = (OptionalVec2){true, {1, 2}}; // 32.
-            t->tiles[2] = (OptionalVec2){true, {1, 1}}; // ...
-            t->tiles[3] = (OptionalVec2){true, {0, 1}};
+            t->tiles[0] = (Option_Vec2){true, {2, 2}}; // .10
+            t->tiles[1] = (Option_Vec2){true, {1, 2}}; // 32.
+            t->tiles[2] = (Option_Vec2){true, {1, 1}}; // ...
+            t->tiles[3] = (Option_Vec2){true, {0, 1}};
             break;
         }
 
         case T: {
-            t->tiles[0] = (OptionalVec2){true, {1, 2}}; // .0.
-            t->tiles[1] = (OptionalVec2){true, {0, 1}}; // 123
-            t->tiles[2] = (OptionalVec2){true, {1, 1}}; // ...
-            t->tiles[3] = (OptionalVec2){true, {2, 1}};
+            t->tiles[0] = (Option_Vec2){true, {1, 2}}; // .0.
+            t->tiles[1] = (Option_Vec2){true, {0, 1}}; // 123
+            t->tiles[2] = (Option_Vec2){true, {1, 1}}; // ...
+            t->tiles[3] = (Option_Vec2){true, {2, 1}};
             break;
         }
 
         case Z: {
-            t->tiles[0] = (OptionalVec2){true, {0, 2}}; // 01.
-            t->tiles[1] = (OptionalVec2){true, {1, 2}}; // .23
-            t->tiles[2] = (OptionalVec2){true, {1, 1}}; // ...
-            t->tiles[3] = (OptionalVec2){true, {2, 1}};
+            t->tiles[0] = (Option_Vec2){true, {0, 2}}; // 01.
+            t->tiles[1] = (Option_Vec2){true, {1, 2}}; // .23
+            t->tiles[2] = (Option_Vec2){true, {1, 1}}; // ...
+            t->tiles[3] = (Option_Vec2){true, {2, 1}};
             break;
         }
     }
@@ -135,7 +135,7 @@ bool Tetromino_init(
 
 void Tetromino_rotate_right(
     Tetromino* const t,
-    const OptionalTetromino other[],
+    const Option_Tetromino other[],
     const uint16_t tetrominoes_count,
     const Settings* const s
 ) {
@@ -146,7 +146,7 @@ void Tetromino_rotate_right(
 
 void Tetromino_rotate_left(
     Tetromino* const t,
-    const OptionalTetromino other[],
+    const Option_Tetromino other[],
     const uint16_t tetrominoes_count,
     const Settings* const s
 ) {
@@ -159,11 +159,11 @@ void Tetromino_rotate_left(
 void Tetromino_rotate(
     Tetromino* const t,
     const Rotation rotation,
-    const OptionalTetromino other[],
+    const Option_Tetromino other[],
     const uint16_t tetrominoes_count,
     const Settings* const s
 ) {
-    OptionalVec2 new_pos[TILES_IN_TETROMINO];
+    Option_Vec2 new_pos[TILES_IN_TETROMINO];
 
     for (uint8_t i = 0; i < TILES_IN_TETROMINO; i++)
         new_pos[i] = t->tiles[i];
@@ -1058,11 +1058,11 @@ void Tetromino_rotate(
 
 void Tetromino_move_right(
     Tetromino* const t,
-    const OptionalTetromino other[],
+    const Option_Tetromino other[],
     const uint16_t tetrominoes_count,
     const Settings* const s
 ) {
-    OptionalVec2 new_pos[TILES_IN_TETROMINO];
+    Option_Vec2 new_pos[TILES_IN_TETROMINO];
 
     for (uint8_t i = 0; i < TILES_IN_TETROMINO; i++) {
         new_pos[i] = t->tiles[i];
@@ -1076,11 +1076,11 @@ void Tetromino_move_right(
 
 void Tetromino_move_left(
     Tetromino* const t,
-    const OptionalTetromino other[],
+    const Option_Tetromino other[],
     const uint16_t tetrominoes_count,
     const Settings* const s
 ) {
-    OptionalVec2 new_pos[TILES_IN_TETROMINO];
+    Option_Vec2 new_pos[TILES_IN_TETROMINO];
 
     for (uint8_t i = 0; i < TILES_IN_TETROMINO; i++) {
         new_pos[i] = t->tiles[i];
@@ -1121,8 +1121,8 @@ MoveState Tetromino_move_down(
 }
 
 bool Tetromino_can_move(
-    const OptionalVec2 new_pos[TILES_IN_TETROMINO],
-    const OptionalTetromino other[],
+    const Option_Vec2 new_pos[TILES_IN_TETROMINO],
+    const Option_Tetromino other[],
     const uint16_t tetrominoes_count,
     const Settings* const s
 ) {
@@ -1273,14 +1273,14 @@ void Tetromino_draw(
 void Tetrominoes_draw(
     SDL_Renderer* const renderer,
     const Tetromino* const t,
-    const OptionalTetromino other[],
+    const Option_Tetromino other[],
     const uint16_t tetrominoes_count,
     const Settings* const s
 ) {
     Tetromino_draw(renderer, t, s);
 
     for (uint8_t i = 0; i < tetrominoes_count; i++) {
-        const OptionalTetromino* const o = &other[i];
+        const Option_Tetromino* const o = &other[i];
 
         if (o->present)
             Tetromino_draw(renderer, &o->value, s);

@@ -141,7 +141,7 @@ void Game_tetromino_push(Game* const g, const Tetromino t) {
     // Replace destroyed Tetromino with new one if possible
     for (uint16_t i = 0; i < g->tetrominoes_count; i++)
         if (!g->tetrominoes[i].present) {
-            g->tetrominoes[i] = (OptionalTetromino){true, t};
+            g->tetrominoes[i] = (Option_Tetromino){true, t};
             return;
         }
 
@@ -156,7 +156,7 @@ void Game_tetromino_push(Game* const g, const Tetromino t) {
         );
     }
 
-    g->tetrominoes[g->tetrominoes_count++] = (OptionalTetromino){true, t};
+    g->tetrominoes[g->tetrominoes_count++] = (Option_Tetromino){true, t};
 }
 
 void Game_tetromino_cleanup(const Game* const g) {

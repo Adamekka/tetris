@@ -29,12 +29,12 @@ typedef enum {
 #define TILES_IN_TETROMINO 4
 
 typedef struct {
-    OptionalVec2 tiles[TILES_IN_TETROMINO];
+    Option_Vec2 tiles[TILES_IN_TETROMINO];
     TetrominoType type;
     Rotation rotation;
 } Tetromino;
 
-typedef optional(Tetromino) OptionalTetromino;
+typedef Option(Tetromino) Option_Tetromino;
 
 /// Returns false if game over
 bool Tetromino_init(
@@ -46,26 +46,26 @@ bool Tetromino_init(
 
 void Tetromino_rotate_right(
     Tetromino* const t,
-    const OptionalTetromino other[],
+    const Option_Tetromino other[],
     const uint16_t tetrominoes_count,
     const Settings* const s
 );
 void Tetromino_rotate_left(
     Tetromino* const t,
-    const OptionalTetromino other[],
+    const Option_Tetromino other[],
     const uint16_t tetrominoes_count,
     const Settings* const s
 );
 
 void Tetromino_move_right(
     Tetromino* const t,
-    const OptionalTetromino other[],
+    const Option_Tetromino other[],
     const uint16_t tetrominoes_count,
     const Settings* const s
 );
 void Tetromino_move_left(
     Tetromino* const t,
-    const OptionalTetromino other[],
+    const Option_Tetromino other[],
     const uint16_t tetrominoes_count,
     const Settings* const s
 );
@@ -76,7 +76,7 @@ MoveState Tetromino_move_down(
 void Tetrominoes_draw(
     SDL_Renderer* const renderer,
     const Tetromino* const t,
-    const OptionalTetromino other[],
+    const Option_Tetromino other[],
     const uint16_t tetrominoes_count,
     const Settings* const s
 );

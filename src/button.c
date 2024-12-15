@@ -10,7 +10,7 @@ void Button_init(
 ) {
     Text text_;
     Text_init(
-        &text_, text, rect, Color_to_SDL_Color(text_color), (optional_uint16){0}
+        &text_, text, rect, Color_to_SDL_Color(text_color), (Option_uint16){0}
     );
 
     b->text = text_;

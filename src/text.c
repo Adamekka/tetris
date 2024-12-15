@@ -6,7 +6,7 @@ void Text_init(
     const char* const text,
     const Rect rect,
     const SDL_Color color,
-    const optional_uint16 wrap
+    const Option_uint16 wrap
 ) {
     t->text = text;
     t->rect = rect;

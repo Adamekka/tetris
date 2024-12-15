@@ -5,7 +5,7 @@
 
 typedef struct {
     uint16_t score;
-    OptionalTetromino* tetrominoes;
+    Option_Tetromino* tetrominoes;
     uint16_t tetrominoes_allocated;
     uint16_t tetrominoes_count;
     // Cache the highest Tetromino in each column

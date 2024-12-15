@@ -62,7 +62,7 @@ void UI_draw_text(
         score_str,
         score_rect,
         (SDL_Color){255, 255, 255, 255},
-        (optional_uint16){0}
+        (Option_uint16){0}
     );
     Text_draw(&score, renderer, a);
 
@@ -72,7 +72,7 @@ void UI_draw_text(
         "A/D to move, S to accelerate, J/L to rotate, Q to quit.",
         hint_rect,
         (SDL_Color){255, 255, 255, 255},
-        (optional_uint16){1, WINDOW_WIDTH / 2}
+        (Option_uint16){1, WINDOW_WIDTH / 2}
     );
     Text_draw(&hint, renderer, a);
 }
@@ -134,7 +134,7 @@ void UI_draw_game_over(SDL_Renderer* const renderer, const Assets* const a) {
             game_over_text,
             game_over_rect,
             (SDL_Color){255, 255, 255, 255},
-            (optional_uint16){0}
+            (Option_uint16){0}
         );
         Text_draw(&game_over, renderer, a);
 
