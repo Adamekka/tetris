@@ -97,14 +97,17 @@ void Game_run(
                     &tetromino, g->highest_tetrominoes, s
                 );
 
-                if (moved == STOP)
+                if (moved == STOP) {
                     state = STOPPED;
-                else if (moved == GAME_OVER)
+                    goto STOPPED; // Skip input
+                } else if (moved == GAME_OVER) {
                     running = false;
+                }
 
                 break;
             }
 
+            STOPPED:
             case STOPPED: {
                 Game_tetromino_push(g, tetromino);
                 Game_check_lines(g, s);
