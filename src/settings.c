@@ -4,15 +4,24 @@
 #include <assert.h>
 
 #define TILES_X_DEFAULT 10
-#define TILES_Y_DEFAULT 16
+#define TILES_X_MIN 6
+#define TILES_X_MAX 13
 
-#define TOP_PADDING_DEFAULT 4
-#define LEFT_PADDING_DEFAULT 4
+#define TILES_Y_DEFAULT 16
+#define TILES_Y_MIN 8
+#define TILES_Y_MAX 16
 
 #define TILE_SIZE_DEFAULT 32
+#define TILE_SIZE_MIN 1
+#define TILE_SIZE_MAX 32
+
 #define TILE_OFFSET_DEFAULT 4
+#define TILE_OFFSET_MIN 1
+#define TILE_OFFSET_MAX 4
 
 #define SPEED_DEFAULT 5
+#define SPEED_MIN 1
+#define SPEED_MAX UINT8_MAX
 
 typedef enum {
     TILES_X = 0,
@@ -95,31 +104,31 @@ void Settings_previous_option(SettingsOption* const selected) {
 void Settings_increase(Settings* const s, const SettingsOption selected) {
     switch (selected) {
         case TILES_X: {
-            if (s->tiles.x < UINT8_MAX)
+            if (s->tiles.x < TILES_X_MAX)
                 s->tiles.x++;
             break;
         }
 
         case TILES_Y: {
-            if (s->tiles.y < UINT8_MAX)
+            if (s->tiles.y < TILES_Y_MAX)
                 s->tiles.y++;
             break;
         }
 
         case TILE_SIZE: {
-            if (s->tile_size < UINT16_MAX)
+            if (s->tile_size < TILE_SIZE_MAX)
                 s->tile_size++;
             break;
         }
 
         case TILE_OFFSET: {
-            if (s->tile_offset < UINT16_MAX)
+            if (s->tile_offset < TILE_OFFSET_MAX)
                 s->tile_offset++;
             break;
         }
 
         case SPEED: {
-            if (s->speed < UINT8_MAX)
+            if (s->speed < SPEED_MAX)
                 s->speed++;
             break;
         }
@@ -131,31 +140,31 @@ void Settings_increase(Settings* const s, const SettingsOption selected) {
 void Settings_decrease(Settings* const s, const SettingsOption selected) {
     switch (selected) {
         case TILES_X: {
-            if (s->tiles.x > 1)
+            if (s->tiles.x > TILES_X_MIN)
                 s->tiles.x--;
             break;
         }
 
         case TILES_Y: {
-            if (s->tiles.y > 1)
+            if (s->tiles.y > TILES_Y_MIN)
                 s->tiles.y--;
             break;
         }
 
         case TILE_SIZE: {
-            if (s->tile_size > 1)
+            if (s->tile_size > TILE_SIZE_MIN)
                 s->tile_size--;
             break;
         }
 
         case TILE_OFFSET: {
-            if (s->tile_offset > 1)
+            if (s->tile_offset > TILE_OFFSET_MIN)
                 s->tile_offset--;
             break;
         }
 
         case SPEED: {
-            if (s->speed > 1)
+            if (s->speed > SPEED_MIN)
                 s->speed--;
             break;
         }
@@ -300,9 +309,7 @@ void Settings_draw(
     Text hint;
     Text_init(
         &hint,
-        "WASD or arrows to navigate, changing values is experimental, they can "
-        "crash game or make undefined behaviour, I've intentionally left big "
-        "ranges, I've warned you",
+        "WASD or arrows to navigate, changing values may break UI",
         text_rect,
         Color_to_SDL_Color(text_color),
         (Option_uint16){1, 250}
