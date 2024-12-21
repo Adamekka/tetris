@@ -13,9 +13,6 @@ typedef struct {
     uint16_t* highest_tetrominoes;
 } Game;
 
-void Game_init(Game* const g, const Settings* const s);
-void Game_destroy(Game* const g);
-
 void Game_run(
     Game* g,
     Score score,
