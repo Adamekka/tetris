@@ -21,6 +21,7 @@ void MainMenu_draw(
 
 void MainMenu_run(
     SDL_Renderer* const renderer,
+    Score score,
     const Assets* const assets,
     Settings* const settings
 ) {
@@ -60,7 +61,7 @@ main_menu_start:
     switch (selected) {
         case PLAY: {
             Game game;
-            Game_run(&game, assets, settings, renderer);
+            Game_run(&game, score, assets, settings, renderer);
             running = true;
             goto main_menu_start;
             break;

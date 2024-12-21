@@ -1,6 +1,7 @@
 #ifndef GAME_H
 #define GAME_H
 
+#include "score.h"
 #include "tetromino.h"
 
 typedef struct {
@@ -17,8 +18,9 @@ void Game_destroy(Game* const g);
 
 void Game_run(
     Game* g,
+    Score score,
     const Assets* const a,
-    const Settings* s,
+    const Settings* settings,
     SDL_Renderer* const renderer
 );
 

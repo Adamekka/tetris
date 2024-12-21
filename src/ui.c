@@ -45,16 +45,16 @@ void UI_draw_text(
     char score_str[SCORE_STR_LEN];
     snprintf(score_str, SCORE_STR_LEN, "Score: %u", score_int);
 
-    const int L_PAD = s->tiles.x * (s->tile_size + s->tile_offset);
+    const int lpad = s->tiles.x * (s->tile_size + s->tile_offset);
 
     const Rect score_rect = {
-      L_PAD + 60,
+      lpad + 60,
       BUTTON_HEIGHT - 30,
       0,
       0,
     };
 
-    const Rect hint_rect = {L_PAD + 205, WINDOW_HEIGHT - 50, 0, 0};
+    const Rect hint_rect = {lpad + 205, WINDOW_HEIGHT - 50, 0, 0};
 
     Text score;
     Text_init(

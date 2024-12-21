@@ -12,13 +12,16 @@ int main() {
         window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC
     );
 
+    Score score;
+    Score_init(score);
+
     Assets assets;
     Assets_init(&assets);
 
     Settings settings;
     Settings_init(&settings);
 
-    MainMenu_run(renderer, &assets, &settings);
+    MainMenu_run(renderer, score, &assets, &settings);
 
     Assets_destroy(&assets);
     SDL_DestroyRenderer(renderer);

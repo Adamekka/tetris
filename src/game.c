@@ -35,12 +35,13 @@ void Game_destroy(Game* const g) {
 
 void Game_run(
     Game* g,
+    Score score,
     const Assets* const a,
-    const Settings* s,
+    const Settings* settings,
     SDL_Renderer* const renderer
 ) {
 game_start:
-    Game_init(g, s);
+    Game_init(g, settings);
 
     TetrominoState state = NEW;
     Tetromino tetromino;
@@ -57,24 +58,36 @@ game_start:
                         running = false;
                     else if (event.key.keysym.sym == SDLK_j)
                         Tetromino_rotate_left(
-                            &tetromino, g->tetrominoes, g->tetrominoes_count, s
+                            &tetromino,
+                            g->tetrominoes,
+                            g->tetrominoes_count,
+                            settings
                         );
                     else if (event.key.keysym.sym == SDLK_l)
                         Tetromino_rotate_right(
-                            &tetromino, g->tetrominoes, g->tetrominoes_count, s
+                            &tetromino,
+                            g->tetrominoes,
+                            g->tetrominoes_count,
+                            settings
                         );
                     else if (event.key.keysym.sym == SDLK_a)
                         Tetromino_move_left(
-                            &tetromino, g->tetrominoes, g->tetrominoes_count, s
+                            &tetromino,
+                            g->tetrominoes,
+                            g->tetrominoes_count,
+                            settings
                         );
                     else if (event.key.keysym.sym == SDLK_d)
                         Tetromino_move_right(
-                            &tetromino, g->tetrominoes, g->tetrominoes_count, s
+                            &tetromino,
+                            g->tetrominoes,
+                            g->tetrominoes_count,
+                            settings
                         );
                     else if (event.key.keysym.sym == SDLK_s)
                         for (uint8_t i = 0; i < 2; i++)
                             Tetromino_move_down(
-                                &tetromino, g->highest_tetrominoes, s
+                                &tetromino, g->highest_tetrominoes, settings
                             );
                 }
             }
@@ -83,11 +96,15 @@ game_start:
         switch (state) {
             case NEW: {
                 bool ok = Tetromino_init(
-                    &tetromino, g->highest_tetrominoes, g->tetrominoes_count, s
+                    &tetromino,
+                    g->highest_tetrominoes,
+                    g->tetrominoes_count,
+                    settings
                 );
 
                 if (!ok) {
                     UI_draw_game_over(renderer, a);
+                    Score_add(score, g->score);
                     Game_destroy(g);
                     goto game_start;
                 }
@@ -98,7 +115,7 @@ game_start:
 
             case MOVING: {
                 MoveState moved = Tetromino_move_down(
-                    &tetromino, g->highest_tetrominoes, s
+                    &tetromino, g->highest_tetrominoes, settings
                 );
 
                 if (moved == STOP) {
@@ -114,23 +131,24 @@ game_start:
             STOPPED:
             case STOPPED: {
                 Game_tetromino_push(g, tetromino);
-                Game_check_lines(g, s);
-                Game_update_highest_tetrominoes(g, s);
+                Game_check_lines(g, settings);
+                Game_update_highest_tetrominoes(g, settings);
                 state = NEW;
                 break;
             }
         }
 
-        UI_draw_bg(renderer, s);
-        UI_draw_text(renderer, a, s, g->score);
+        UI_draw_bg(renderer, settings);
+        UI_draw_text(renderer, a, settings, g->score);
+        Score_draw(score, renderer, a);
 
         Tetrominoes_draw(
-            renderer, &tetromino, g->tetrominoes, g->tetrominoes_count, s
+            renderer, &tetromino, g->tetrominoes, g->tetrominoes_count, settings
         );
 
         SDL_RenderPresent(renderer);
 
-        SDL_Delay(1000 / s->speed);
+        SDL_Delay(1000 / settings->speed);
     }
 
     Game_destroy(g);
