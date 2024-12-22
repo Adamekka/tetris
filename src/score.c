@@ -63,7 +63,7 @@ void Score_add(Score s, uint16_t new_score) {
 void Score_draw(
     const Score s, SDL_Renderer* const renderer, const Assets* const a
 ) {
-    const int32_t lpad = WINDOW_HEIGHT * 9 / 10;
+    const int32_t lpad = WINDOW_HEIGHT;
 
     char* score_title = "High scores";
     Text title;

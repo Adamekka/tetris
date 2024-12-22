@@ -12,13 +12,19 @@ typedef struct {
     Option_Vec2 tiles[TILES_IN_TETROMINO];
     TetrominoType type;
     Rotation rotation;
+    uint8_t offset;
 } Tetromino;
 
 typedef Option(Tetromino) Option_Tetromino;
 
-/// Returns false if game over
-bool Tetromino_init(
+void Tetromino_init(
     Tetromino* const t,
+    const uint16_t tetrominoes_count,
+    const Settings* const s
+);
+
+bool Tetromino_can_move(
+    const Option_Vec2 new_pos[TILES_IN_TETROMINO],
     const Option_Tetromino other[],
     const uint16_t tetrominoes_count,
     const Settings* const s
@@ -56,8 +62,10 @@ MoveState Tetromino_move_down(
 void Tetrominoes_draw(
     SDL_Renderer* const renderer,
     const Tetromino* const t,
+    const Tetromino* const t_next,
     const Option_Tetromino other[],
     const uint16_t tetrominoes_count,
+    const Assets* const assets,
     const Settings* const s
 );
 

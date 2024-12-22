@@ -1,6 +1,6 @@
 #include "tetromino.h"
 #include "consts.h"
-#include "rect.h"
+#include "text.h"
 #include <assert.h>
 
 void Tetromino_rotate(
@@ -11,16 +11,8 @@ void Tetromino_rotate(
     const Settings* const s
 );
 
-bool Tetromino_can_move(
-    const Option_Vec2 new_pos[TILES_IN_TETROMINO],
-    const Option_Tetromino other[],
-    const uint16_t tetrominoes_count,
-    const Settings* const s
-);
-
-bool Tetromino_init(
+void Tetromino_init(
     Tetromino* const t,
-    const Option_Tetromino other[],
     const uint16_t tetrominoes_count,
     const Settings* const s
 ) {
@@ -114,6 +106,8 @@ bool Tetromino_init(
         default: assert(false);
     }
 
+    t->offset = offset.x;
+
     for (uint8_t i = 0; i < TILES_IN_TETROMINO; i++) {
         t->tiles[i].value = Vec2_add(t->tiles[i].value, offset);
         assert(t->tiles[i].value.x >= 0);
@@ -122,8 +116,6 @@ bool Tetromino_init(
 
     const Rotation rotation = (Rotation)rand() % ROTATION_SIZE;
     Tetromino_rotate(t, rotation, NULL, tetrominoes_count, s);
-
-    return Tetromino_can_move(t->tiles, other, tetrominoes_count, s);
 }
 
 void Tetromino_rotate_right(
@@ -1257,14 +1249,117 @@ void Tetromino_draw(
     }
 }
 
+void Tetromino_next_draw(
+    SDL_Renderer* const renderer,
+    const Tetromino* t,
+    const Assets* const assets,
+    const Settings* const s
+) {
+    switch (t->type) {
+        case I: {
+            SDL_SetRenderDrawColor(
+                renderer, I_COLOR_R, I_COLOR_G, I_COLOR_B, 255
+            );
+            break;
+        }
+
+        case J: {
+            SDL_SetRenderDrawColor(
+                renderer, J_COLOR_R, J_COLOR_G, J_COLOR_B, 255
+            );
+            break;
+        }
+
+        case L: {
+            SDL_SetRenderDrawColor(
+                renderer, L_COLOR_R, L_COLOR_G, L_COLOR_B, 255
+            );
+            break;
+        }
+
+        case O: {
+            SDL_SetRenderDrawColor(
+                renderer, O_COLOR_R, O_COLOR_G, O_COLOR_B, 255
+            );
+            break;
+        }
+
+        case S: {
+            SDL_SetRenderDrawColor(
+                renderer, S_COLOR_R, S_COLOR_G, S_COLOR_B, 255
+            );
+            break;
+        }
+
+        case T: {
+            SDL_SetRenderDrawColor(
+                renderer, T_COLOR_R, T_COLOR_G, T_COLOR_B, 255
+            );
+            break;
+        }
+
+        case Z: {
+            SDL_SetRenderDrawColor(
+                renderer, Z_COLOR_R, Z_COLOR_G, Z_COLOR_B, 255
+            );
+            break;
+        }
+
+        default: assert(false); break;
+    }
+
+    const int32_t lpad = s->tiles.x * (s->tile_size + s->tile_offset) + 30;
+    const int32_t tpad = 100;
+
+    for (uint8_t i = 0; i < TILES_IN_TETROMINO; i++) {
+        if (t->tiles[i].present) {
+            Rect rect = {
+              (t->tiles[i].value.x - t->offset)
+                      * (s->tile_size + s->tile_offset)
+                  + lpad,
+              (s->tiles.y - t->tiles[i].value.y)
+                      * (s->tile_size + s->tile_offset)
+                  + tpad,
+              s->tile_size,
+              s->tile_size
+            };
+
+            if (t->type == O) {
+                rect.x += s->tile_size / 2;
+                rect.y -= s->tile_size * 2;
+            } else if (t->type == I) {
+                rect.x -= s->tile_size / 2;
+            }
+
+            SDL_RenderFillRect(renderer, &rect);
+        }
+    }
+
+    const Rect rect = {lpad + 50, tpad - 20, 0, 0};
+
+    Text title;
+    Text_init(
+        &title,
+        "Next",
+        rect,
+        (SDL_Color){255, 255, 255, 255},
+        (Option_uint16){0}
+    );
+    Text_draw(&title, renderer, assets);
+}
+
 void Tetrominoes_draw(
     SDL_Renderer* const renderer,
     const Tetromino* const t,
+    const Tetromino* const t_next,
     const Option_Tetromino other[],
     const uint16_t tetrominoes_count,
+    const Assets* const assets,
     const Settings* const s
 ) {
     Tetromino_draw(renderer, t, s);
+
+    Tetromino_next_draw(renderer, t_next, assets, s);
 
     for (uint8_t i = 0; i < tetrominoes_count; i++) {
         const Option_Tetromino* const o = &other[i];

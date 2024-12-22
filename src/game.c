@@ -45,6 +45,9 @@ game_start:
 
     TetrominoState state = NEW;
     Tetromino tetromino;
+    Tetromino next_tetromino;
+
+    Tetromino_init(&next_tetromino, g->tetrominoes_count, settings);
 
     SDL_Event event;
     bool running = true;
@@ -95,11 +98,16 @@ game_start:
 
         switch (state) {
             case NEW: {
-                bool ok = Tetromino_init(
-                    &tetromino, g->tetrominoes, g->tetrominoes_count, settings
-                );
+                tetromino = next_tetromino;
 
-                if (!ok) {
+                Tetromino_init(&next_tetromino, g->tetrominoes_count, settings);
+
+                if (!Tetromino_can_move(
+                        tetromino.tiles,
+                        g->tetrominoes,
+                        g->tetrominoes_count,
+                        settings
+                    )) {
                     UI_draw_game_over(renderer, a);
                     Score_add(score, g->score);
                     Game_destroy(g);
@@ -138,7 +146,13 @@ game_start:
         Score_draw(score, renderer, a);
 
         Tetrominoes_draw(
-            renderer, &tetromino, g->tetrominoes, g->tetrominoes_count, settings
+            renderer,
+            &tetromino,
+            &next_tetromino,
+            g->tetrominoes,
+            g->tetrominoes_count,
+            a,
+            settings
         );
 
         SDL_RenderPresent(renderer);

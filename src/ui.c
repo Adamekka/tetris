@@ -45,7 +45,7 @@ void UI_draw_text(
     char score_str[SCORE_STR_LEN];
     snprintf(score_str, SCORE_STR_LEN, "Score: %u", score_int);
 
-    const int lpad = s->tiles.x * (s->tile_size + s->tile_offset);
+    const int32_t lpad = s->tiles.x * (s->tile_size + s->tile_offset);
 
     const Rect score_rect = {
       lpad + 60,
