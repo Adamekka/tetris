@@ -20,7 +20,7 @@ bool Tetromino_can_move(
 
 bool Tetromino_init(
     Tetromino* const t,
-    const uint16_t highest_tetrominoes[],
+    const Option_Tetromino other[],
     const uint16_t tetrominoes_count,
     const Settings* const s
 ) {
@@ -123,14 +123,7 @@ bool Tetromino_init(
     const Rotation rotation = (Rotation)rand() % ROTATION_SIZE;
     Tetromino_rotate(t, rotation, NULL, tetrominoes_count, s);
 
-    for (uint8_t i = 0; i < TILES_IN_TETROMINO; i++) {
-        Vec2* tile = &t->tiles[i].value;
-
-        if (tile->y - 1 == highest_tetrominoes[tile->x])
-            return false;
-    }
-
-    return true;
+    return Tetromino_can_move(t->tiles, other, tetrominoes_count, s);
 }
 
 void Tetromino_rotate_right(

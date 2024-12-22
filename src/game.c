@@ -96,10 +96,7 @@ game_start:
         switch (state) {
             case NEW: {
                 bool ok = Tetromino_init(
-                    &tetromino,
-                    g->highest_tetrominoes,
-                    g->tetrominoes_count,
-                    settings
+                    &tetromino, g->tetrominoes, g->tetrominoes_count, settings
                 );
 
                 if (!ok) {

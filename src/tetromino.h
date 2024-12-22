@@ -39,7 +39,7 @@ typedef Option(Tetromino) Option_Tetromino;
 /// Returns false if game over
 bool Tetromino_init(
     Tetromino* const t,
-    const uint16_t highest_tetrominoes[],
+    const Option_Tetromino other[],
     const uint16_t tetrominoes_count,
     const Settings* const s
 );

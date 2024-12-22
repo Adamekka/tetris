@@ -21,8 +21,8 @@ void UI_draw_bg(SDL_Renderer* const renderer, const Settings* const s) {
         renderer, TILE_COLOR_R, TILE_COLOR_G, TILE_COLOR_B, 255
     );
 
-    for (int x = 0; x < s->tiles.x; x++)
-        for (int y = 0; y < s->tiles.y; y++) {
+    for (uint8_t x = 0; x < s->tiles.x; x++)
+        for (uint8_t y = 0; y < s->tiles.y; y++) {
             const Rect rect = {
               x * (s->tile_size + s->tile_offset) + LEFT_PADDING,
               y * (s->tile_size + s->tile_offset) + TOP_PADDING,
