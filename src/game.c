@@ -118,8 +118,6 @@ game_start:
                 if (moved == STOP) {
                     state = STOPPED;
                     goto STOPPED; // Skip input
-                } else if (moved == GAME_OVER) {
-                    running = false;
                 }
 
                 break;

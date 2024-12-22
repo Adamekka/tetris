@@ -4,7 +4,6 @@
 typedef enum {
     MOVE,
     STOP,
-    GAME_OVER,
 } MoveState;
 
 #endif

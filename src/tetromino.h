@@ -2,29 +2,9 @@
 #define TETROMINO_H
 
 #include "move_state.h"
+#include "rotation.h"
 #include "settings.h"
-
-typedef enum {
-    I,
-    J,
-    L,
-    O,
-    S,
-    T,
-    Z,
-} TetrominoType;
-
-#define TETROMINO_TYPE_SIZE (Z + 1)
-
-/// Clockwise
-typedef enum {
-    UP = 0,
-    RIGHT = 1,
-    DOWN = 2,
-    LEFT = 3,
-} Rotation;
-
-#define ROTATION_SIZE (LEFT + 1)
+#include "tetromino_type.h"
 
 #define TILES_IN_TETROMINO 4
 

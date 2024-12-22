@@ -1091,16 +1091,10 @@ MoveState Tetromino_move_down(
     // Check Tetromino can move down
     for (uint8_t i = 0; i < TILES_IN_TETROMINO; i++) {
         const Vec2* tile = &t->tiles[i].value;
-#ifdef DEBUG
-        printf("tile->x: %d\n", tile->x);
-        printf("tile->y: %d\n", tile->y);
-#endif
+
         assert(tile->x >= 0);
         assert(tile->x < s->tiles.x);
         assert(tile->y >= 0);
-
-        if (tile->y > s->tiles.y)
-            return GAME_OVER;
 
         if (tile->y - 1 == highest_tetrominoes[tile->x])
             return STOP;
