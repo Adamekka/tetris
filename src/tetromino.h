@@ -56,7 +56,9 @@ void Tetromino_move_left(
     const Settings* const settings
 );
 MoveState Tetromino_move_down(
-    Tetromino* const t, uint16_t highest_tetrominoes[], const Settings* const settings
+    Tetromino* const t,
+    uint16_t highest_tetrominoes[],
+    const Settings* const settings
 );
 
 void Tetrominoes_draw(
