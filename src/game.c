@@ -253,6 +253,8 @@ void Game_check_lines(Game* const g, const Settings* const settings) {
             }
 
         next_x_tile:
+            // Empty statement to fix "label at end of compound statement"
+            (void)0;
         }
 
         assert(found);
@@ -277,6 +279,8 @@ void Game_check_lines(Game* const g, const Settings* const settings) {
                         g->tetrominoes[i].value.tiles[j].value.y--;
 
     next_y_line:
+        // Empty statement to fix "label at end of compound statement"
+        (void)0;
     }
 
     if (any_found)
