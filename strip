@@ -10,4 +10,5 @@ fi
 
 git clean -fdX
 rm -rfv .git
-rm -v "$0"
+rm -v .clang* .gitignore
+rm -v "$0" # Self-destruct
