@@ -84,7 +84,7 @@ void Tetromino_init(
     switch (t->type) {
         case I:
         case O: {
-            offset.x = (uint8_t)rand() % (settings->tiles.x - 4);
+            offset.x = (uint8_t)(rand() % (settings->tiles.x - 4));
             offset.y = settings->tiles.y - 4;
             assert(offset.x < settings->tiles.x - 4);
             assert(offset.x >= 0);
@@ -96,7 +96,7 @@ void Tetromino_init(
         case S:
         case T:
         case Z: {
-            offset.x = (uint8_t)rand() % (settings->tiles.x - 3);
+            offset.x = (uint8_t)(rand() % (settings->tiles.x - 3));
             offset.y = settings->tiles.y - 3;
             assert(offset.x < settings->tiles.x - 3);
             assert(offset.x >= 0);
@@ -1111,15 +1111,12 @@ bool Tetromino_can_move(
         return true;
 
     for (uint8_t i = 0; i < TILES_IN_TETROMINO; i++) {
-        if (!&new_pos->present)
+        if (!new_pos->present)
             continue;
 
         const Vec2* tile = &new_pos[i].value;
 
-        if (tile->y - 1 < 0)
-            return false;
-
-        if (tile->x < 0 || tile->x >= settings->tiles.x)
+        if (tile->y - 1 < 0 || tile->x >= settings->tiles.x)
             return false;
 
         for (uint8_t j = 0; j < tetrominoes_count; j++) {

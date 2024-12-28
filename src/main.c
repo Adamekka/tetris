@@ -1,7 +1,8 @@
 #include "consts.h"
 #include "main_menu.h"
+#include <time.h>
 
-int main() {
+int main(void) {
     SDL_Init(SDL_INIT_VIDEO);
 
     SDL_Window* window = SDL_CreateWindow(
