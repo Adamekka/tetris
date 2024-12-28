@@ -8,13 +8,13 @@ void Tetromino_rotate(
     const Rotation rotation,
     const Option_Tetromino other[],
     const uint16_t tetrominoes_count,
-    const Settings* const s
+    const Settings* const settings
 );
 
 void Tetromino_init(
     Tetromino* const t,
     const uint16_t tetrominoes_count,
-    const Settings* const s
+    const Settings* const settings
 ) {
     t->rotation = UP;
 
@@ -84,9 +84,9 @@ void Tetromino_init(
     switch (t->type) {
         case I:
         case O: {
-            offset.x = (uint8_t)rand() % (s->tiles.x - 4);
-            offset.y = s->tiles.y - 4;
-            assert(offset.x < s->tiles.x - 4);
+            offset.x = (uint8_t)rand() % (settings->tiles.x - 4);
+            offset.y = settings->tiles.y - 4;
+            assert(offset.x < settings->tiles.x - 4);
             assert(offset.x >= 0);
             break;
         }
@@ -96,9 +96,9 @@ void Tetromino_init(
         case S:
         case T:
         case Z: {
-            offset.x = (uint8_t)rand() % (s->tiles.x - 3);
-            offset.y = s->tiles.y - 3;
-            assert(offset.x < s->tiles.x - 3);
+            offset.x = (uint8_t)rand() % (settings->tiles.x - 3);
+            offset.y = settings->tiles.y - 3;
+            assert(offset.x < settings->tiles.x - 3);
             assert(offset.x >= 0);
             break;
         }
@@ -111,33 +111,33 @@ void Tetromino_init(
     for (uint8_t i = 0; i < TILES_IN_TETROMINO; i++) {
         t->tiles[i].value = Vec2_add(t->tiles[i].value, offset);
         assert(t->tiles[i].value.x >= 0);
-        assert(t->tiles[i].value.x < s->tiles.x);
+        assert(t->tiles[i].value.x < settings->tiles.x);
     }
 
     const Rotation rotation = (Rotation)rand() % ROTATION_SIZE;
-    Tetromino_rotate(t, rotation, NULL, tetrominoes_count, s);
+    Tetromino_rotate(t, rotation, NULL, tetrominoes_count, settings);
 }
 
 void Tetromino_rotate_right(
     Tetromino* const t,
     const Option_Tetromino other[],
     const uint16_t tetrominoes_count,
-    const Settings* const s
+    const Settings* const settings
 ) {
     const Rotation rotation = (t->rotation + 1) % ROTATION_SIZE;
     assert(rotation < ROTATION_SIZE);
-    Tetromino_rotate(t, rotation, other, tetrominoes_count, s);
+    Tetromino_rotate(t, rotation, other, tetrominoes_count, settings);
 }
 
 void Tetromino_rotate_left(
     Tetromino* const t,
     const Option_Tetromino other[],
     const uint16_t tetrominoes_count,
-    const Settings* const s
+    const Settings* const settings
 ) {
     const Rotation rotation = (t->rotation + ROTATION_SIZE - 1) % ROTATION_SIZE;
     assert(rotation >= 0);
-    Tetromino_rotate(t, rotation, other, tetrominoes_count, s);
+    Tetromino_rotate(t, rotation, other, tetrominoes_count, settings);
 }
 
 // docs/tetrominoes_edited.webp
@@ -146,7 +146,7 @@ void Tetromino_rotate(
     const Rotation rotation,
     const Option_Tetromino other[],
     const uint16_t tetrominoes_count,
-    const Settings* const s
+    const Settings* const settings
 ) {
     Option_Vec2 new_pos[TILES_IN_TETROMINO];
 
@@ -1033,7 +1033,7 @@ void Tetromino_rotate(
         }
     }
 
-    if (Tetromino_can_move(new_pos, other, tetrominoes_count, s)) {
+    if (Tetromino_can_move(new_pos, other, tetrominoes_count, settings)) {
         for (uint8_t i = 0; i < TILES_IN_TETROMINO; i++)
             t->tiles[i] = new_pos[i];
 
@@ -1045,7 +1045,7 @@ void Tetromino_move_right(
     Tetromino* const t,
     const Option_Tetromino other[],
     const uint16_t tetrominoes_count,
-    const Settings* const s
+    const Settings* const settings
 ) {
     Option_Vec2 new_pos[TILES_IN_TETROMINO];
 
@@ -1054,7 +1054,7 @@ void Tetromino_move_right(
         new_pos[i].value.x++;
     }
 
-    if (Tetromino_can_move(new_pos, other, tetrominoes_count, s))
+    if (Tetromino_can_move(new_pos, other, tetrominoes_count, settings))
         for (uint8_t i = 0; i < TILES_IN_TETROMINO; i++)
             t->tiles[i].value.x++;
 }
@@ -1063,7 +1063,7 @@ void Tetromino_move_left(
     Tetromino* const t,
     const Option_Tetromino other[],
     const uint16_t tetrominoes_count,
-    const Settings* const s
+    const Settings* const settings
 ) {
     Option_Vec2 new_pos[TILES_IN_TETROMINO];
 
@@ -1072,20 +1072,22 @@ void Tetromino_move_left(
         new_pos[i].value.x--;
     }
 
-    if (Tetromino_can_move(new_pos, other, tetrominoes_count, s))
+    if (Tetromino_can_move(new_pos, other, tetrominoes_count, settings))
         for (uint8_t i = 0; i < TILES_IN_TETROMINO; i++)
             t->tiles[i].value.x--;
 }
 
 MoveState Tetromino_move_down(
-    Tetromino* const t, uint16_t highest_tetrominoes[], const Settings* const s
+    Tetromino* const t,
+    uint16_t highest_tetrominoes[],
+    const Settings* const settings
 ) {
     // Check Tetromino can move down
     for (uint8_t i = 0; i < TILES_IN_TETROMINO; i++) {
         const Vec2* tile = &t->tiles[i].value;
 
         assert(tile->x >= 0);
-        assert(tile->x < s->tiles.x);
+        assert(tile->x < settings->tiles.x);
         assert(tile->y >= 0);
 
         if (tile->y - 1 == highest_tetrominoes[tile->x])
@@ -1103,7 +1105,7 @@ bool Tetromino_can_move(
     const Option_Vec2 new_pos[TILES_IN_TETROMINO],
     const Option_Tetromino other[],
     const uint16_t tetrominoes_count,
-    const Settings* const s
+    const Settings* const settings
 ) {
     if (other == NULL)
         return true;
@@ -1117,7 +1119,7 @@ bool Tetromino_can_move(
         if (tile->y - 1 < 0)
             return false;
 
-        if (tile->x < 0 || tile->x >= s->tiles.x)
+        if (tile->x < 0 || tile->x >= settings->tiles.x)
             return false;
 
         for (uint8_t j = 0; j < tetrominoes_count; j++) {
@@ -1177,7 +1179,9 @@ bool Tetromino_can_move(
 #define Z_COLOR_B 0x00
 
 void Tetromino_draw(
-    SDL_Renderer* const renderer, const Tetromino* t, const Settings* const s
+    SDL_Renderer* const renderer,
+    const Tetromino* t,
+    const Settings* const settings
 ) {
     switch (t->type) {
         case I: {
@@ -1235,13 +1239,14 @@ void Tetromino_draw(
     for (uint8_t i = 0; i < TILES_IN_TETROMINO; i++) {
         if (t->tiles[i].present) {
             const Rect rect = {
-              t->tiles[i].value.x * (s->tile_size + s->tile_offset)
+              t->tiles[i].value.x
+                      * (settings->tile_size + settings->tile_offset)
                   + LEFT_PADDING,
-              (s->tiles.y - t->tiles[i].value.y)
-                      * (s->tile_size + s->tile_offset)
+              (settings->tiles.y - t->tiles[i].value.y)
+                      * (settings->tile_size + settings->tile_offset)
                   + TOP_PADDING,
-              s->tile_size,
-              s->tile_size
+              settings->tile_size,
+              settings->tile_size
             };
 
             SDL_RenderFillRect(renderer, &rect);
@@ -1253,7 +1258,7 @@ void Tetromino_next_draw(
     SDL_Renderer* const renderer,
     const Tetromino* t,
     const Assets* const assets,
-    const Settings* const s
+    const Settings* const settings
 ) {
     switch (t->type) {
         case I: {
@@ -1308,27 +1313,30 @@ void Tetromino_next_draw(
         default: assert(false); break;
     }
 
-    const int32_t lpad = s->tiles.x * (s->tile_size + s->tile_offset) + 30;
+    const int32_t lpad
+        = settings->tiles.x * (settings->tile_size + settings->tile_offset)
+        + 30;
+
     const int32_t tpad = 100;
 
     for (uint8_t i = 0; i < TILES_IN_TETROMINO; i++) {
         if (t->tiles[i].present) {
             Rect rect = {
               (t->tiles[i].value.x - t->offset)
-                      * (s->tile_size + s->tile_offset)
+                      * (settings->tile_size + settings->tile_offset)
                   + lpad,
-              (s->tiles.y - t->tiles[i].value.y)
-                      * (s->tile_size + s->tile_offset)
+              (settings->tiles.y - t->tiles[i].value.y)
+                      * (settings->tile_size + settings->tile_offset)
                   + tpad,
-              s->tile_size,
-              s->tile_size
+              settings->tile_size,
+              settings->tile_size
             };
 
             if (t->type == O) {
-                rect.x += s->tile_size / 2;
-                rect.y -= s->tile_size * 2;
+                rect.x += settings->tile_size / 2;
+                rect.y -= settings->tile_size * 2;
             } else if (t->type == I) {
-                rect.x -= s->tile_size / 2;
+                rect.x -= settings->tile_size / 2;
             }
 
             SDL_RenderFillRect(renderer, &rect);
@@ -1350,21 +1358,21 @@ void Tetromino_next_draw(
 
 void Tetrominoes_draw(
     SDL_Renderer* const renderer,
-    const Tetromino* const t,
-    const Tetromino* const t_next,
+    const Tetromino* const tetromino,
+    const Tetromino* const tetromino_next,
     const Option_Tetromino other[],
     const uint16_t tetrominoes_count,
     const Assets* const assets,
-    const Settings* const s
+    const Settings* const settings
 ) {
-    Tetromino_draw(renderer, t, s);
+    Tetromino_draw(renderer, tetromino, settings);
 
-    Tetromino_next_draw(renderer, t_next, assets, s);
+    Tetromino_next_draw(renderer, tetromino_next, assets, settings);
 
     for (uint8_t i = 0; i < tetrominoes_count; i++) {
         const Option_Tetromino* const o = &other[i];
 
         if (o->present)
-            Tetromino_draw(renderer, &o->value, s);
+            Tetromino_draw(renderer, &o->value, settings);
     }
 }

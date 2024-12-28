@@ -16,7 +16,7 @@ typedef struct {
 void Game_run(
     Game* g,
     Score score,
-    const Assets* const a,
+    const Assets* const assets,
     const Settings* settings,
     SDL_Renderer* const renderer
 );

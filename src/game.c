@@ -5,13 +5,13 @@
 
 #define INITIAL_ALLOCATED_TETROMINOES_COUNT 10
 
-void Game_tetromino_push(Game* const g, const Tetromino t);
+void Game_tetromino_push(Game* const g, const Tetromino tetromino);
 void Game_update_highest_tetrominoes(
-    const Game* const g, const Settings* const s
+    const Game* const g, const Settings* const settings
 );
-void Game_check_lines(Game* const g, const Settings* const s);
+void Game_check_lines(Game* const g, const Settings* const settings);
 
-void Game_init(Game* const g, const Settings* const s) {
+void Game_init(Game* const g, const Settings* const settings) {
     g->score = 0;
 
     // Prealloc some memory, so we don't have to realloc first few times
@@ -22,9 +22,9 @@ void Game_init(Game* const g, const Settings* const s) {
     g->tetrominoes_count = 0;
 
     g->highest_tetrominoes
-        = malloc(sizeof(*g->highest_tetrominoes) * s->tiles.x);
+        = malloc(sizeof(*g->highest_tetrominoes) * settings->tiles.x);
 
-    for (uint16_t i = 0; i < s->tiles.x; i++)
+    for (uint16_t i = 0; i < settings->tiles.x; i++)
         g->highest_tetrominoes[i] = 0;
 }
 
@@ -36,7 +36,7 @@ void Game_destroy(Game* const g) {
 void Game_run(
     Game* g,
     Score score,
-    const Assets* const a,
+    const Assets* const assets,
     const Settings* settings,
     SDL_Renderer* const renderer
 ) {
@@ -108,7 +108,7 @@ game_start:
                         g->tetrominoes_count,
                         settings
                     )) {
-                    UI_draw_game_over(renderer, a);
+                    UI_draw_game_over(renderer, assets);
                     Score_add(score, g->score);
                     Game_destroy(g);
                     goto game_start;
@@ -142,8 +142,8 @@ game_start:
         }
 
         UI_draw_bg(renderer, settings);
-        UI_draw_text(renderer, a, settings, g->score);
-        Score_draw(score, renderer, a);
+        UI_draw_text(renderer, assets, settings, g->score);
+        Score_draw(score, renderer, assets);
 
         Tetrominoes_draw(
             renderer,
@@ -151,7 +151,7 @@ game_start:
             &next_tetromino,
             g->tetrominoes,
             g->tetrominoes_count,
-            a,
+            assets,
             settings
         );
 
@@ -164,11 +164,11 @@ game_start:
     g = NULL;
 }
 
-void Game_tetromino_push(Game* const g, const Tetromino t) {
+void Game_tetromino_push(Game* const g, const Tetromino tetromino) {
     // Replace destroyed Tetromino with new one if possible
     for (uint16_t i = 0; i < g->tetrominoes_count; i++)
         if (!g->tetrominoes[i].present) {
-            g->tetrominoes[i] = (Option_Tetromino){true, t};
+            g->tetrominoes[i] = (Option_Tetromino){true, tetromino};
             return;
         }
 
@@ -183,7 +183,8 @@ void Game_tetromino_push(Game* const g, const Tetromino t) {
         );
     }
 
-    g->tetrominoes[g->tetrominoes_count++] = (Option_Tetromino){true, t};
+    g->tetrominoes[g->tetrominoes_count++]
+        = (Option_Tetromino){true, tetromino};
 }
 
 void Game_tetromino_cleanup(const Game* const g) {
@@ -199,9 +200,9 @@ void Game_tetromino_cleanup(const Game* const g) {
 }
 
 void Game_update_highest_tetrominoes(
-    const Game* const g, const Settings* const s
+    const Game* const g, const Settings* const settings
 ) {
-    for (uint16_t i = 0; i < s->tiles.x; i++)
+    for (uint16_t i = 0; i < settings->tiles.x; i++)
         g->highest_tetrominoes[i] = 0;
 
     for (uint16_t i = 0; i < g->tetrominoes_count; i++) {
@@ -222,13 +223,13 @@ void Game_update_highest_tetrominoes(
     }
 }
 
-void Game_check_lines(Game* const g, const Settings* const s) {
+void Game_check_lines(Game* const g, const Settings* const settings) {
     bool any_found = false;
 
-    for (int16_t y = s->tiles.y - 1; y >= 0; y--) {
+    for (int16_t y = settings->tiles.y - 1; y >= 0; y--) {
         bool found = true;
 
-        for (uint8_t x = 0; x < s->tiles.x; x++) {
+        for (uint8_t x = 0; x < settings->tiles.x; x++) {
             bool col_tile_found = false;
 
             for (uint16_t i = 0; i < g->tetrominoes_count; i++) {

@@ -13,7 +13,7 @@ void Score_init(Score s);
 void Score_add(Score s, const uint16_t new_score);
 
 void Score_draw(
-    const Score s, SDL_Renderer* const renderer, const Assets* const a
+    const Score s, SDL_Renderer* const renderer, const Assets* const assets
 );
 
 #endif

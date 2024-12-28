@@ -20,6 +20,7 @@
 #define BUTTON_SELECTED_COLOR_R 0
 #define BUTTON_SELECTED_COLOR_G 0
 #define BUTTON_SELECTED_COLOR_B 0xFF
+
 typedef struct {
     uint8_t r, g, b;
 } Color;

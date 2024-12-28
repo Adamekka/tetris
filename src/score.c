@@ -61,7 +61,7 @@ void Score_add(Score s, uint16_t new_score) {
 #define SCORE_HEIGHT 30
 
 void Score_draw(
-    const Score s, SDL_Renderer* const renderer, const Assets* const a
+    const Score s, SDL_Renderer* const renderer, const Assets* const assets
 ) {
     const int32_t lpad = WINDOW_HEIGHT;
 
@@ -74,7 +74,7 @@ void Score_draw(
         (SDL_Color){255, 255, 255, 255},
         (Option_uint16){0}
     );
-    Text_draw(&title, renderer, a);
+    Text_draw(&title, renderer, assets);
 
     for (uint8_t i = 0; i < (SCORE_SIZE - 1); i++) {
         char score_text[sizeof("1. ") + UINT16_MAX_DIGITS];
@@ -88,6 +88,6 @@ void Score_draw(
             (SDL_Color){255, 255, 255, 255},
             (Option_uint16){0}
         );
-        Text_draw(&score, renderer, a);
+        Text_draw(&score, renderer, assets);
     }
 }
