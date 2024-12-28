@@ -84,7 +84,7 @@ void Score_draw(
         Text_init(
             &score,
             score_text,
-            (Rect){lpad, (SCORE_HEIGHT) * (i + 6), 0, 0},
+            (Rect){lpad, SCORE_HEIGHT * (i + 6), 0, 0},
             (SDL_Color){255, 255, 255, 255},
             (Option_uint16){0}
         );
