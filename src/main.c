@@ -12,6 +12,8 @@ int main() {
         window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC
     );
 
+    srand((uint32_t)time(NULL));
+
     Score score;
     Score_init(score);
 
