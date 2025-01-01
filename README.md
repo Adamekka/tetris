@@ -24,7 +24,7 @@ You can control the game only using the keyboard.
 | `Enter`            | Select   |
 | `Q`                | Quit     |
 
-## Settings
+### Settings
 
 | Key                | Action                      |
 | ------------------ | --------------------------- |
@@ -33,7 +33,7 @@ You can control the game only using the keyboard.
 | `Enter`            | Select (only `Back` button) |
 | `Q`                | Quit                        |
 
-## Game
+### Game
 
 | Key     | Action            |
 | ------- | ----------------- |
